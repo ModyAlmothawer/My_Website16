@@ -1,0 +1,322 @@
+<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=no"><title>DarkPs Live</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel=stylesheet><script src=https://cdnjs.cloudflare.com/ajax/libs/livekit-client/2.15.7/livekit-client.umd.min.js></script><style>
+:root {
+  --bg: #ffffff; --fg: #1a1a1a; --sub: #888; --border: #e0e0e0;
+  --card: #fafafa; --card2: #f5f5f7; --input-bg: #fff;
+  --btn-bg: #1a1a1a; --btn-fg: #fff; --shadow: rgba(0,0,0,0.08);
+  --chat-bg: #f8f8f8; --bubble-user: #1a1a1a; --bubble-user-fg: #f5f5f5;
+  --bubble-ai: #f0f0f0; --bubble-ai-fg: #1a1a1a; --accent: #6c5ce7;
+  --settings-bg: #fff; --settings-border: #e8e8e8;
+}
+[data-theme="dark"] {
+  --bg: #0f0f0f; --fg: #f0f0f0; --sub: #999; --border: #333;
+  --card: #1a1a1a; --card2: #222; --input-bg: #1a1a1a;
+  --btn-bg: #f0f0f0; --btn-fg: #0f0f0f; --shadow: rgba(0,0,0,0.3);
+  --chat-bg: #1a1a1a; --bubble-user: #f0f0f0; --bubble-user-fg: #0f0f0f;
+  --bubble-ai: #2a2a2a; --bubble-ai-fg: #f0f0f0; --accent: #a29bfe;
+  --settings-bg: #1a1a1a; --settings-border: #333;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--fg);overflow:hidden;touch-action:manipulation;transition:background .4s,color .4s}
+.page{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.settings-wrap{position:absolute;top:20px;left:20px;z-index:200}
+.settings-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;color:var(--fg)}
+.settings-btn:hover{background:var(--card2);transform:scale(1.05)}
+.settings-btn svg{width:18px;height:18px}
+.settings-menu{position:absolute;top:48px;left:0;background:var(--settings-bg);border:1px solid var(--settings-border);border-radius:16px;padding:8px;min-width:240px;box-shadow:0 12px 40px var(--shadow);opacity:0;transform:translateY(-8px) scale(0.95);pointer-events:none;transition:all .35s cubic-bezier(.4,0,.2,1)}
+.settings-menu.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.settings-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .2s;border:none;background:none;color:var(--fg);font-family:inherit;font-size:13px;width:100%;text-align:left}
+.settings-item:hover{background:var(--card2)}
+.settings-item svg{width:16px;height:16px;flex-shrink:0}
+.settings-divider{height:1px;background:var(--border);margin:6px 0}
+.sub-panel{display:none;padding:4px 0;animation:panelIn .3s ease}
+.sub-panel.active{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+.back-btn{font-size:12px;color:var(--sub);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;gap:4px;border:none;background:none;font-family:inherit;padding:4px 8px}
+.back-btn:hover{color:var(--fg)}
+.panel-title{font-size:11px;font-weight:500;color:var(--sub);letter-spacing:.5px;text-transform:uppercase;padding:2px 8px 8px}
+.reset-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:8px 12px;border-radius:10px;border:1px dashed var(--border);background:none;color:var(--sub);font-family:inherit;font-size:12px;cursor:pointer;margin-top:8px;transition:all .2s}
+.reset-btn:hover{border-color:var(--fg);color:var(--fg)}
+.reset-btn svg{width:13px;height:13px}
+.color-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:4px 8px}
+.color-swatch{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.color-swatch-dot{width:36px;height:36px;border-radius:50%;border:2px solid transparent;transition:all .2s;position:relative}
+.color-swatch-dot:hover{transform:scale(1.08)}
+.color-swatch-dot.active{border-color:#22c55e}
+.color-swatch-dot.active::after{content:"";position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;background:#22c55e;border-radius:50%;border:2px solid var(--settings-bg);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");background-size:8px;background-repeat:no-repeat;background-position:center}
+.color-swatch-label{font-size:10px;color:var(--sub);white-space:nowrap}
+.sw-red{background:radial-gradient(circle at 35% 35%,#ff6b6b,#c0392b)}
+.sw-bw-sand{background:radial-gradient(circle at 35% 35%,#d4c5b0,#a89880)}
+.sw-bw-black{background:radial-gradient(circle at 35% 35%,#888,#2a2a2a)}
+.sw-brown{background:radial-gradient(circle at 35% 35%,#c8956c,#7b4f2e)}
+.sw-blue{background:radial-gradient(circle at 35% 35%,#60a5fa,#1d4ed8)}
+.sw-green{background:radial-gradient(circle at 35% 35%,#4ade80,#15803d)}
+.sw-pink{background:radial-gradient(circle at 35% 35%,#f472b6,#be185d)}
+.sw-purple{background:radial-gradient(circle at 35% 35%,#a78bfa,#6d28d9)}
+.theme-options{display:flex;gap:8px;padding:4px 8px}
+.theme-opt{flex:1;padding:8px 6px;border-radius:10px;border:2px solid var(--border);background:var(--card);cursor:pointer;text-align:center;transition:all .2s;font-size:12px;color:var(--fg);font-family:inherit}
+.theme-opt:hover{border-color:var(--accent)}
+.theme-opt.active{border-color:var(--accent);background:rgba(108,92,231,0.08)}
+.theme-opt .dot{width:18px;height:18px;border-radius:50%;margin:0 auto 4px;border:1px solid var(--border)}
+.theme-opt.light .dot{background:linear-gradient(135deg,#fff,#e0e0e0)}
+.theme-opt.dark .dot{background:linear-gradient(135deg,#1a1a1a,#444)}
+#callScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;width:100%;height:100%}
+.call-timer{font-size:13px;color:var(--sub);letter-spacing:1.5px;position:absolute;top:32px;opacity:0;transition:opacity .4s}
+.call-timer.active{opacity:1}
+.orb-container{position:relative;width:300px;height:300px;display:flex;align-items:center;justify-content:center}
+.orb-canvas{position:relative;width:280px;height:280px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:transform .1s linear}
+.orb-canvas canvas{position:absolute;top:0;left:0;width:280px;height:280px;pointer-events:none;border-radius:50%;filter:blur(10px)}
+.orb-label{font-size:14px;color:var(--sub);font-weight:400;letter-spacing:.5px;height:18px;opacity:0;transition:opacity .3s}
+.orb-label.active{opacity:1}
+.controls{display:flex;align-items:center;gap:32px}
+.ctrl-btn{border:none;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .2s;background:var(--card2)}
+.ctrl-btn:hover{background:var(--border);transform:scale(1.04)}
+.ctrl-btn:active{transform:scale(.97)}
+.btn-start{width:72px;height:72px;border-radius:50%;background:var(--btn-bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(0,0,0,0.12)}
+.btn-start:hover{transform:scale(1.06);box-shadow:0 6px 28px rgba(0,0,0,0.18)}
+.btn-start svg{width:32px;height:32px;fill:var(--btn-fg)}
+.btn-start.hidden{display:none}
+.btn-mute{width:56px;height:56px;display:none}
+.btn-mute.active{display:flex}
+.btn-mute svg{width:22px;height:22px;color:var(--fg)}
+.btn-mute.muted svg{color:#ff3b30}
+.btn-end{width:56px;height:56px;background:#ff3b30;box-shadow:0 4px 16px rgba(255,59,48,0.25);display:none}
+.btn-end.active{display:flex}
+.btn-end:hover{background:#e0332a;box-shadow:0 6px 22px rgba(255,59,48,0.35)}
+.btn-end svg{width:22px;height:22px;fill:#fff}
+.status-text{position:absolute;bottom:36px;font-size:12px;color:var(--sub);letter-spacing:.3px;transition:opacity .3s;opacity:0}
+</style></head><body><div class=page><div class=settings-wrap><button class=settings-btn id=settingsBtn onclick=toggleSettings()><svg viewbox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><circle cx=12 cy=12 r=3 /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><div class=settings-menu id=settingsMenu><div class="sub-panel active" id=menuMain><button class=settings-item onclick="showPanel('menuBubble')"><svg viewbox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><circle cx=12 cy=12 r=10 /><circle cx=12 cy=12 r=4 /></svg> Bubble Theme </button><div class=settings-divider></div><button class=settings-item onclick="showPanel('menuTheme')"><svg viewbox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><circle cx=12 cy=12 r=5 /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg> Theme </button></div><div class=sub-panel id=menuBubble><button class=back-btn onclick="showPanel('menuMain')"><svg viewbox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round style=width:14px;height:14px><polyline points="15 18 9 12 15 6"/></svg> Back </button><div class=panel-title>Muted Bubble (Fixed)</div><div class=color-grid><div class=color-swatch onclick="setMutedColor('red')"><div class="color-swatch-dot sw-red active" id=sw-muted-red></div><span class=color-swatch-label>Red</span></div></div><div class=settings-divider style="margin:10px 8px"></div><div class=panel-title>Active Bubble (Your Voice)</div><div class=color-grid><div class=color-swatch onclick="setActiveColor('blue')"><div class="color-swatch-dot sw-blue active" id=sw-active-blue></div><span class=color-swatch-label>Blue</span></div><div class=color-swatch onclick="setActiveColor('green')"><div class="color-swatch-dot sw-green" id=sw-active-green></div><span class=color-swatch-label>Green</span></div><div class=color-swatch onclick="setActiveColor('brown')"><div class="color-swatch-dot sw-brown" id=sw-active-brown></div><span class=color-swatch-label>Brown</span></div></div><div class=settings-divider style="margin:10px 8px"></div><div class=panel-title>Speaking Bubble (AI Voice)</div><div class=color-grid><div class=color-swatch onclick="setSpeakingColor('pink')"><div class="color-swatch-dot sw-pink active" id=sw-speaking-pink></div><span class=color-swatch-label>Pink</span></div><div class=color-swatch onclick="setSpeakingColor('purple')"><div class="color-swatch-dot sw-purple" id=sw-speaking-purple></div><span class=color-swatch-label>Purple</span></div></div><button class=reset-btn onclick=resetBubbleTheme()><svg viewbox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg> Reset to Default </button></div><div class=sub-panel id=menuTheme><button class=back-btn onclick="showPanel('menuMain')"><svg viewbox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round style=width:14px;height:14px><polyline points="15 18 9 12 15 6"/></svg> Back </button><div class=theme-options><button class="theme-opt light active" id=themeLight onclick="setTheme('light')"><div class=dot></div> Light </button><button class="theme-opt dark" id=themeDark onclick="setTheme('dark')"><div class=dot></div> Dark </button></div></div></div></div><div id=callScreen><div class=call-timer id=timerEl>00:00</div><div style=display:flex;flex-direction:column;align-items:center;gap:16px><div class=orb-container id=orbContainer><div class=orb-canvas id=orbCanvas><canvas id=waveCanvas width=280 height=280></canvas></div></div><div class=orb-label id=orbLabel>Tap to start</div></div><div class=controls id=controls><button class=btn-start id=btnStart onclick=startCall()><svg viewbox="0 0 24 24"><rect x=4 y=9 width=2.5 height=6 rx=1.25 /><rect x=9.3 y=4 width=2.5 height=16 rx=1.25 /><rect x=14.6 y=6 width=2.5 height=12 rx=1.25 /><rect x=20 y=9 width=2.5 height=6 rx=1.25 /></svg></button><button class="ctrl-btn btn-mute" id=btnMute onclick=toggleMute()><svg id=muteIcon viewbox="0 0 24 24" fill=none stroke=currentColor stroke-width=2 stroke-linecap=round stroke-linejoin=round><path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1=12 y1=19 x2=12 y2=23 /><line x1=8 y1=23 x2=16 y2=23 /></svg></button><button class="ctrl-btn btn-end" id=btnEnd onclick=endCall()><svg viewbox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg></button></div></div><div class=status-text id=statusText></div></div><script>
+const API = "http://127.0.0.1:8000";
+let room = null, callId = null, isMuted = false, timerInterval = null, seconds = 0, localTrack = null;
+let callActive = false, audioVolume = 0, animFrame = null, orbPhase = 0, aiState = "idle";
+let currentTheme = "light", settingsOpen = false;
+let mutedColorKey = "red", activeColorKey = "blue", speakingColorKey = "pink";
+
+const $ = id => document.getElementById(id);
+const orbCanvas = $("orbCanvas"), waveCanvas = $("waveCanvas"), C = waveCanvas.getContext("2d");
+const timerEl = $("timerEl"), orbLabel = $("orbLabel"), btnMute = $("btnMute");
+const btnEnd = $("btnEnd"), btnStart = $("btnStart"), muteIcon = $("muteIcon");
+const statusText = $("statusText"), settingsMenu = $("settingsMenu");
+
+function setStatus(msg) { statusText.textContent = msg; statusText.style.opacity = msg ? "1" : "0"; }
+function setOrb(state) { aiState = state; if (!callActive) { orbLabel.textContent = "Tap to start"; return; } const labels = { idle: "", listening: "Listening...", thinking: "Thinking...", speaking: "Speaking..." }; orbLabel.textContent = labels[state] || ""; }
+function startTimer() { seconds = 0; timerInterval = setInterval(() => { seconds++; timerEl.textContent = String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0'); }, 1000); }
+
+const MUTED_PALETTES = { red: { colors: [[239,68,68,0.45],[248,113,113,0.48],[220,38,38,0.35]], glow: [239,68,68] } };
+const ACTIVE_PALETTES = {
+  blue: { listening: [[2,132,199,0.5],[34,211,238,0.55],[13,148,136,0.4],[6,182,212]], thinking: [[29,78,216,0.5],[59,130,246,0.55],[30,64,175,0.4],[37,99,235]], speaking: [[37,99,235,0.5],[6,182,212,0.55],[124,58,237,0.4],[59,130,246]] },
+  green: { listening: [[21,128,61,0.5],[74,222,128,0.55],[22,163,74,0.4],[34,197,94]], thinking: [[20,83,45,0.5],[21,128,61,0.55],[15,60,35,0.4],[22,163,74]], speaking: [[22,163,74,0.5],[74,222,128,0.55],[21,128,61,0.4],[34,197,94]] },
+  brown: { listening: [[120,80,40,0.5],[180,130,80,0.55],[100,60,30,0.4],[160,100,50]], thinking: [[90,55,25,0.5],[140,95,55,0.55],[75,45,20,0.4],[120,75,35]], speaking: [[160,100,50,0.5],[200,150,90,0.55],[130,80,40,0.4],[180,130,70]] }
+};
+const SPEAKING_PALETTES = { pink: { speaking: [[236,72,153,0.5],[244,114,182,0.55],[190,24,93,0.4],[236,72,153]] }, purple: { speaking: [[109,40,217,0.5],[139,92,246,0.55],[88,28,135,0.4],[124,58,237]] } };
+
+function getColors() {
+  const mp = MUTED_PALETTES[mutedColorKey] || MUTED_PALETTES.red;
+  const ap = ACTIVE_PALETTES[activeColorKey] || ACTIVE_PALETTES.blue;
+  const sp = SPEAKING_PALETTES[speakingColorKey] || SPEAKING_PALETTES.pink;
+  const idleColors = [
+    [ap.listening[0][0], ap.listening[0][1], ap.listening[0][2], 0.25],
+    [ap.listening[1][0], ap.listening[1][1], ap.listening[1][2], 0.22],
+    [ap.listening[2][0], ap.listening[2][1], ap.listening[2][2], 0.18],
+    [ap.listening[3][0], ap.listening[3][1], ap.listening[3][2]]
+  ];
+  return { listening: ap.listening, thinking: ap.thinking, speaking: sp.speaking, muted: [mp.colors[0], mp.colors[1], mp.colors[2], mp.glow], idle: idleColors };
+}
+let curC = [[2,132,199,0.25],[34,211,238,0.22],[13,148,136,0.18]], curS = [6,182,212];
+
+function toggleSettings() { settingsOpen = !settingsOpen; settingsMenu.classList.toggle("open", settingsOpen); if (settingsOpen) showPanel("menuMain"); }
+function showPanel(id) { document.querySelectorAll(".sub-panel").forEach(p => p.classList.remove("active")); $(id).classList.add("active"); }
+function setMutedColor(key) { mutedColorKey = key; $("sw-muted-red").classList.toggle("active", key === "red"); playThemeSound(); }
+function setActiveColor(key) { activeColorKey = key; ["blue","green","brown"].forEach(k => { $("sw-active-"+k).classList.toggle("active", k === key); }); playThemeSound(); }
+function setSpeakingColor(key) { speakingColorKey = key; $("sw-speaking-pink").classList.toggle("active", key === "pink"); $("sw-speaking-purple").classList.toggle("active", key === "purple"); playThemeSound(); }
+function resetBubbleTheme() { setMutedColor("red"); setActiveColor("blue"); setSpeakingColor("pink"); playThemeSound(); }
+function setTheme(theme) { currentTheme = theme; document.documentElement.setAttribute("data-theme", theme); $("themeLight").classList.toggle("active", theme === "light"); $("themeDark").classList.toggle("active", theme === "dark"); playThemeSound(); }
+document.addEventListener("click", e => { if (settingsOpen && !e.target.closest(".settings-wrap")) { settingsOpen = false; settingsMenu.classList.remove("open"); } });
+
+function playAud(type) {
+  try {
+    const t = new (window.AudioContext || window.webkitAudioContext)(), n = t.currentTime;
+    if (type === "start") {
+      [261.63,329.63,392,523.25].forEach((f,i) => { const o = t.createOscillator(), g = t.createGain(); o.type = "sine"; o.frequency.setValueAtTime(f, n + 0.04 * i); g.gain.setValueAtTime(0, n + 0.04 * i); g.gain.linearRampToValueAtTime(0.12, n + 0.04 * i + 0.08); g.gain.exponentialRampToValueAtTime(1e-4, n + 0.04 * i + 0.55); o.connect(g); g.connect(t.destination); o.start(n + 0.04 * i); o.stop(n + 0.04 * i + 0.55); });
+    } else if (type === "end") {
+      [392,329.63,261.63].forEach((f,i) => { const o = t.createOscillator(), g = t.createGain(); o.type = "sine"; o.frequency.setValueAtTime(f, n + 0.06 * i); g.gain.setValueAtTime(0, n + 0.06 * i); g.gain.linearRampToValueAtTime(0.12, n + 0.06 * i + 0.05); g.gain.exponentialRampToValueAtTime(1e-4, n + 0.06 * i + 0.45); o.connect(g); g.connect(t.destination); o.start(n + 0.06 * i); o.stop(n + 0.06 * i + 0.45); });
+    } else if (type === "mute" || type === "unmute") {
+      const o = t.createOscillator(), g = t.createGain(); o.type = "triangle"; o.frequency.setValueAtTime(type === "mute" ? 320 : 220, n); o.frequency.exponentialRampToValueAtTime(type === "mute" ? 160 : 440, n + 0.12); g.gain.setValueAtTime(0.12, n); g.gain.exponentialRampToValueAtTime(1e-4, n + 0.12); o.connect(g); g.connect(t.destination); o.start(); o.stop(n + 0.12);
+    }
+  } catch (e) {}
+}
+function playThemeSound() {
+  try {
+    const t = new (window.AudioContext || window.webkitAudioContext)(), n = t.currentTime;
+    const o = t.createOscillator(), g = t.createGain(); o.type = "sine"; o.frequency.setValueAtTime(523.25, n); o.frequency.exponentialRampToValueAtTime(659.25, n + 0.08); g.gain.setValueAtTime(0, n); g.gain.linearRampToValueAtTime(0.08, n + 0.02); g.gain.exponentialRampToValueAtTime(1e-4, n + 0.18); o.connect(g); g.connect(t.destination); o.start(); o.stop(n + 0.18);
+  } catch (e) {}
+}
+
+function drawBlob(cx, cy, radius, phase, vol, colors) {
+  C.beginPath();
+  const segments = 120;
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    const wave1 = Math.sin(3 * angle + phase * 1.2) * 14;
+    const wave2 = Math.cos(2 * angle - phase * 0.8) * 10;
+    const wave3 = Math.sin(5 * angle + phase * 1.5) * 6;
+    const wave4 = Math.cos(7 * angle - phase * 2) * 4;
+    const r = radius + (wave1 + wave2 + wave3 + wave4) * (0.3 + vol * 0.7);
+    const x = cx + Math.cos(angle) * r;
+    const y = cy + Math.sin(angle) * r;
+    if (i === 0) C.moveTo(x, y); else C.lineTo(x, y);
+  }
+  C.closePath();
+  C.fillStyle = colors;
+  C.fill();
+}
+
+function drawOrb() {
+  animFrame = requestAnimationFrame(drawOrb);
+  let e = 0;
+  if (callActive) {
+    if (aiState === "speaking") e = 0.2 + 0.3 * Math.sin(Date.now() / 200);
+    else if (aiState === "listening") e = 0.1 + 0.1 * Math.sin(Date.now() / 300);
+    else e = 0.03 + 0.02 * Math.sin(Date.now() / 800);
+  } else e = 0.03 + 0.02 * Math.sin(Date.now() / 800);
+  if (isMuted && aiState === "idle") e = 0.02 * Math.sin(Date.now() / 200);
+  audioVolume += 0.18 * (e - audioVolume);
+  orbPhase += 0.022 + 0.038 * audioVolume;
+  const cfgColors = getColors();
+  const effectiveState = (isMuted && aiState === "idle") ? "muted" : (callActive ? aiState : "idle");
+  const target = cfgColors[effectiveState] || cfgColors.idle;
+  for (let i = 0; i < 3; i++) for (let t = 0; t < 4; t++) curC[i][t] += (target[i][t] - curC[i][t]) * 0.075;
+  for (let i = 0; i < 3; i++) curS[i] += (target[3][i] - curS[i]) * 0.075;
+  C.clearRect(0, 0, 280, 280);
+  const bubbleScale = 1 + 0.05 * audioVolume;
+  orbCanvas.style.transform = `scale(${bubbleScale})`;
+  const cx = 140, cy = 140, baseRadius = 65 + 20 * audioVolume;
+  const glowAlpha = (effectiveState === "muted") ? 0.15 : 0.18 + audioVolume * 0.25;
+  const bgGrad = C.createRadialGradient(cx, cy, 0, cx, cy, 130);
+  bgGrad.addColorStop(0, `rgba(${Math.round(curS[0])},${Math.round(curS[1])},${Math.round(curS[2])},${glowAlpha})`);
+  bgGrad.addColorStop(0.5, `rgba(${Math.round(curS[0])},${Math.round(curS[1])},${Math.round(curS[2])},${glowAlpha * 0.5})`);
+  bgGrad.addColorStop(1, `rgba(${Math.round(curS[0])},${Math.round(curS[1])},${Math.round(curS[2])},0)`);
+  C.fillStyle = bgGrad;
+  C.beginPath(); C.arc(cx, cy, 130, 0, Math.PI * 2); C.fill();
+  const shadowAlpha = (effectiveState === "muted") ? 0.1 : 0.12 + audioVolume * 0.2;
+  orbCanvas.style.boxShadow = `0 20px 50px rgba(${Math.round(curS[0])},${Math.round(curS[1])},${Math.round(curS[2])},${shadowAlpha})`;
+  C.save();
+  C.globalCompositeOperation = "screen";
+  const c1 = `rgba(${Math.round(curC[0][0])},${Math.round(curC[0][1])},${Math.round(curC[0][2])},${curC[0][3]})`;
+  drawBlob(cx + 4, cy + 4, baseRadius + 10, orbPhase * 1.0, audioVolume, c1);
+  const c2 = `rgba(${Math.round(curC[1][0])},${Math.round(curC[1][1])},${Math.round(curC[1][2])},${curC[1][3]})`;
+  drawBlob(cx - 2, cy - 2, baseRadius + 2, orbPhase * 0.8 + 1, audioVolume, c2);
+  const c3 = `rgba(${Math.round(curC[2][0])},${Math.round(curC[2][1])},${Math.round(curC[2][2])},${curC[2][3]})`;
+  drawBlob(cx, cy, baseRadius - 6, orbPhase * 1.3 + 2, audioVolume, c3);
+  C.restore();
+}
+
+function setMuteIcon(muted) {
+  muteIcon.innerHTML = muted ? '<line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V5a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>' : '<path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>';
+}
+
+async function checkMicPermission() {
+  try { const status = await navigator.permissions.query({ name: 'microphone' }); if (status.state === 'denied') return false; } catch (e) {}
+  try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); stream.getTracks().forEach(t => t.stop()); return true; } catch (e) { return false; }
+}
+
+async function startCall() {
+  btnStart.disabled = true;
+  setStatus("Checking mic...");
+  const micOk = await checkMicPermission();
+  if (!micOk) { setStatus("Mic permission denied"); btnStart.disabled = false; return; }
+  setStatus("Connecting...");
+  try {
+    const res = await fetch(`${API}/api/start?t=${Date.now()}`);
+    if (!res.ok) throw new Error('Connection failed (' + res.status + ')');
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    callId = data.call_id;
+    await connectLiveKit(data.server_url, data.participant_token);
+  } catch (e) { setStatus(e.message); btnStart.disabled = false; }
+}
+
+async function connectLiveKit(serverUrl, token) {
+  if (typeof LivekitClient === 'undefined') throw new Error('LiveKit library not loaded');
+  if (room) { try { await room.disconnect(); } catch (e) {} room = null; }
+  room = new LivekitClient.Room({
+    adaptiveStream: true, dynacast: true,
+    reconnectPolicy: { maxRetryDelay: 5000, minRetryDelay: 1000, retryAttempts: 3 },
+    audioCaptureDefaults: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+  });
+  room.on(LivekitClient.RoomEvent.TrackSubscribed, (track) => {
+    if (track.kind === LivekitClient.Track.Kind.Audio) {
+      document.querySelectorAll('body>audio').forEach(a => a.remove());
+      const el = track.attach();
+      el.autoplay = true;
+      el.setAttribute('playsinline', '');
+      document.body.appendChild(el);
+      el.play().catch(() => {});
+    }
+  });
+  room.on(LivekitClient.RoomEvent.ActiveSpeakersChanged, (speakers) => {
+    const ai = speakers.some(s => s.identity && !s.identity.toLowerCase().includes('user'));
+    if (ai) { setOrb("speaking"); setStatus("AI speaking"); } else if (room && room.state === LivekitClient.ConnectionState.Connected) { setOrb("listening"); setStatus("Listening..."); }
+  });
+  room.on(LivekitClient.RoomEvent.TrackUnsubscribed, () => { setOrb("listening"); setStatus("Listening..."); });
+  room.on(LivekitClient.RoomEvent.Reconnecting, () => { setStatus("Reconnecting..."); });
+  room.on(LivekitClient.RoomEvent.Reconnected, () => { setOrb("listening"); setStatus("Listening..."); });
+  room.on(LivekitClient.RoomEvent.Disconnected, (reason) => {
+    if (reason && reason !== LivekitClient.DisconnectReason.CLIENT_INITIATED) setStatus("Connection lost");
+    handleDisconnect();
+  });
+  await room.connect(serverUrl, token, { autoSubscribe: true });
+  localTrack = await LivekitClient.createLocalAudioTrack({
+    echoCancellation: true, noiseSuppression: true, autoGainControl: true,
+    channelCount: 1, sampleRate: 16000
+  });
+  await room.localParticipant.publishTrack(localTrack, { audioBitrate: 24000, dtx: true });
+  callActive = true;
+  btnStart.classList.add("hidden");
+  btnMute.classList.add("active");
+  btnEnd.classList.add("active");
+  timerEl.classList.add("active");
+  orbLabel.classList.add("active");
+  setOrb("listening");
+  setStatus("Listening...");
+  playAud("start");
+  startTimer();
+  btnStart.disabled = false;
+}
+
+async function endCall() {
+  if (callId) { try { await fetch(`${API}/api/end/${callId}`, { method: 'POST' }); } catch (e) {} }
+  if (room) { try { await room.disconnect(); } catch (e) {} }
+  handleDisconnect();
+}
+
+function handleDisconnect() {
+  clearInterval(timerInterval);
+  if (localTrack) { try { localTrack.stop(); } catch (e) {} }
+  room = null; callId = null; localTrack = null;
+  callActive = false; isMuted = false;
+  btnMute.classList.remove("active", "muted");
+  btnEnd.classList.remove("active");
+  btnStart.classList.remove("hidden");
+  timerEl.classList.remove("active");
+  orbLabel.classList.remove("active");
+  setOrb("idle");
+  setStatus("");
+  timerEl.textContent = "00:00";
+  document.querySelectorAll('body>audio').forEach(a => a.remove());
+  btnStart.disabled = false;
+  setMuteIcon(false);
+  playAud("end");
+}
+
+function toggleMute() {
+  if (!localTrack || !callActive) return;
+  isMuted = !isMuted;
+  if (isMuted) { localTrack.mute(); playAud("mute"); btnMute.classList.add("muted"); setMuteIcon(true); setOrb("idle"); setStatus("Muted"); }
+  else { localTrack.unmute(); playAud("unmute"); btnMute.classList.remove("muted"); setMuteIcon(false); setOrb("listening"); setStatus("Listening..."); }
+}
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("selectstart", e => { if (e.target.id !== "chatInput") e.preventDefault(); });
+setTheme("light");
+drawOrb();
+</script></body></html>
