@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VideoHub</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Tahoma,sans-serif;
+}
+
+body{
+    background:#0b0b0f;
+    color:#fff;
+    min-height:100vh;
+}
+
+header{
+    height:65px;
+    background:#121218;
+    border-bottom:1px solid #292932;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:bold;
+    color:#ff1744;
+}
+
+.search{
+    width:40%;
+}
+
+.search input{
+    width:100%;
+    padding:12px 18px;
+    border-radius:25px;
+    border:1px solid #333;
+    background:#1b1b22;
+    color:white;
+    outline:none;
+}
+
+.account button,
+.adminBtn{
+    background:#ff1744;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:22px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:25px;
+}
+
+.hero{
+    background:linear-gradient(135deg,#191923,#111116);
+    padding:25px;
+    border-radius:18px;
+    margin-bottom:25px;
+}
+
+.hero h1{
+    margin-bottom:8px;
+}
+
+.hero p{
+    color:#aaa;
+}
+
+.video-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:22px;
+}
+
+.video-card{
+    background:#15151c;
+    border-radius:15px;
+    overflow:hidden;
+    border:1px solid #24242d;
+}
+
+.video-card video{
+    width:100%;
+    aspect-ratio:16/9;
+    background:#000;
+    display:block;
+}
+
+.video-info{
+    padding:15px;
+}
+
+.video-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.video-description{
+    color:#aaa;
+    font-size:14px;
+    margin-bottom:12px;
+}
+
+.stats{
+    display:flex;
+    gap:15px;
+    color:#999;
+    font-size:13px;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.actions button{
+    flex:1;
+    background:#202028;
+    color:#fff;
+    border:none;
+    padding:10px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.actions button:hover{
+    background:#30303a;
+}
+
+.actions .liked{
+    background:#ff1744;
+}
+
+.actions .disliked{
+    background:#444;
+}
+
+.follow{
+    width:100%;
+    margin-top:10px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:#fff;
+    color:#111;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.follow.active{
+    background:#333;
+    color:white;
+}
+
+.comments{
+    margin-top:15px;
+    border-top:1px solid #292932;
+    padding-top:12px;
+}
+
+.comment-list{
+    max-height:180px;
+    overflow:auto;
+    margin-bottom:10px;
+}
+
+.comment{
+    background:#202028;
+    padding:8px;
+    border-radius:8px;
+    margin-bottom:7px;
+    font-size:13px;
+}
+
+.comment-input{
+    display:flex;
+    gap:5px;
+}
+
+.comment-input input{
+    flex:1;
+    background:#202028;
+    color:white;
+    border:none;
+    padding:9px;
+    border-radius:8px;
+    outline:none;
+}
+
+.comment-input button{
+    border:none;
+    background:#ff1744;
+    color:white;
+    border-radius:8px;
+    padding:0 12px;
+    cursor:pointer;
+}
+
+/* ADMIN */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.8);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:500;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:95%;
+    max-width:500px;
+    background:#16161d;
+    padding:25px;
+    border-radius:18px;
+    border:1px solid #30303a;
+}
+
+.modal-box h2{
+    margin-bottom:20px;
+}
+
+.modal-box input,
+.modal-box textarea{
+    width:100%;
+    margin-bottom:12px;
+    padding:12px;
+    background:#22222a;
+    color:white;
+    border:1px solid #333;
+    border-radius:10px;
+    outline:none;
+}
+
+.modal-box textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.modal-box button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#ff1744;
+    color:#fff;
+    cursor:pointer;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+.close{
+    background:#333 !important;
+}
+
+.admin-panel{
+    display:none;
+    background:#17171f;
+    border:1px solid #30303a;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+}
+
+.admin-panel.show{
+    display:block;
+}
+
+.admin-panel h2{
+    margin-bottom:15px;
+}
+
+.file-label{
+    display:block;
+    background:#24242d;
+    padding:15px;
+    text-align:center;
+    border-radius:10px;
+    cursor:pointer;
+    margin-bottom:12px;
+}
+
+.file-label input{
+    display:none;
+}
+
+.delete-btn{
+    background:#b00020 !important;
+    margin-top:10px;
+}
+
+.empty{
+    text-align:center;
+    color:#777;
+    padding:60px 10px;
+    grid-column:1/-1;
+}
+
+@media(max-width:700px){
+    header{
+        padding:0 12px;
+    }
+
+    .search{
+        width:45%;
+    }
+
+    .logo{
+        font-size:19px;
+    }
+
+    .container{
+        padding:15px;
+    }
+
+    .video-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">▶ VideoHub</div>
+
+    <div class="search">
+        <input
+            type="text"
+            id="search"
+            placeholder="ابحث عن فيديو..."
+            oninput="renderVideos()"
+        >
+    </div>
+
+    <div class="account">
+        <button onclick="openLogin()">تسجيل الدخول</button>
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="hero">
+        <h1>مرحبًا بك في VideoHub 🎬</h1>
+        <p>
+            شاهد الفيديوهات، ضع إعجابك، علّق، وتابع الحسابات التي تحبها.
+        </p>
+    </section>
+
+
+    <!-- لوحة الإدارة -->
+
+    <section id="adminPanel" class="admin-panel">
+
+        <h2>⚙️ لوحة نشر الفيديوهات</h2>
+
+        <input
+            type="text"
+            id="videoTitle"
+            placeholder="عنوان الفيديو"
+        >
+
+        <textarea
+            id="videoDescription"
+            placeholder="وصف الفيديو"
+        ></textarea>
+
+        <label class="file-label">
+            🎥 اختر الفيديو
+            <input
+                type="file"
+                id="videoFile"
+                accept="video/*"
+            >
+        </label>
+
+        <button onclick="publishVideo()">
+            🚀 نشر الفيديو
+        </button>
+
+        <button onclick="logout()" class="close">
+            تسجيل الخروج
+        </button>
+
+    </section>
+
+
+    <div id="videoGrid" class="video-grid"></div>
+
+</main>
+
+
+<!-- تسجيل الدخول -->
+
+<div class="modal" id="loginModal">
+
+    <div class="modal-box">
+
+        <h2>🔐 تسجيل الدخول</h2>
+
+        <input
+            type="email"
+            id="loginEmail"
+            placeholder="البريد الإلكتروني"
+        >
+
+        <input
+            type="password"
+            id="loginPassword"
+            placeholder="كلمة المرور"
+        >
+
+        <button onclick="login()">
+            دخول
+        </button>
+
+        <button
+            onclick="closeLogin()"
+            class="close"
+        >
+            إلغاء
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/*
+====================================================
+ بيانات الحساب المسموح له بالنشر
+====================================================
+
+ملاحظة:
+هذا نظام تجريبي Front-End فقط.
+لا تستخدمه لحماية موقع حقيقي.
+*/
+
+const ADMIN_EMAIL = "mmnnqqpp88@gmail.com";
+const ADMIN_PASSWORD = "m7742179770m";
+
+
+/*
+====================================================
+ البيانات
+====================================================
+*/
+
+let videos = JSON.parse(
+    localStorage.getItem("videohub_videos") || "[]"
+);
+
+let currentUser =
+    localStorage.getItem("videohub_user") || null;
+
+
+/*
+====================================================
+ توليد ID
+====================================================
+*/
+
+function generateId(){
+
+    return Date.now().toString() +
+           Math.random().toString(36).substring(2);
+
+}
+
+
+/*
+====================================================
+ تسجيل الدخول
+====================================================
+*/
+
+function openLogin(){
+
+    document
+        .getElementById("loginModal")
+        .classList.add("show");
+
+}
+
+
+function closeLogin(){
+
+    document
+        .getElementById("loginModal")
+        .classList.remove("show");
+
+}
+
+
+function login(){
+
+    const email =
+        document.getElementById("loginEmail").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+    if(
+        email === ADMIN_EMAIL &&
+        password === ADMIN_PASSWORD
+    ){
+
+        currentUser = email;
+
+        localStorage.setItem(
+            "videohub_user",
+            email
+        );
+
+        closeLogin();
+
+        showAdmin();
+
+        alert("تم تسجيل الدخول بنجاح ✅");
+
+    }else{
+
+        alert("البريد الإلكتروني أو كلمة المرور غير صحيحة ❌");
+
+    }
+
+}
+
+
+/*
+====================================================
+ إظهار لوحة الإدارة
+====================================================
+*/
+
+function showAdmin(){
+
+    const panel =
+        document.getElementById("adminPanel");
+
+    if(currentUser === ADMIN_EMAIL){
+
+        panel.classList.add("show");
+
+    }else{
+
+        panel.classList.remove("show");
+
+    }
+
+}
+
+
+function logout(){
+
+    currentUser = null;
+
+    localStorage.removeItem(
+        "videohub_user"
+    );
+
+    showAdmin();
+
+}
+
+
+/*
+====================================================
+ نشر الفيديو
+====================================================
+*/
+
+function publishVideo(){
+
+    if(currentUser !== ADMIN_EMAIL){
+
+        alert("ليس لديك صلاحية نشر الفيديوهات ❌");
+
+        return;
+
+    }
+
+    const title =
+        document.getElementById("videoTitle").value.trim();
+
+    const description =
+        document
+        .getElementById("videoDescription")
+        .value.trim();
+
+    const file =
+        document.getElementById("videoFile").files[0];
+
+
+    if(!title){
+
+        alert("اكتب عنوان الفيديو");
+
+        return;
+
+    }
+
+    if(!file){
+
+        alert("اختر فيديو أولاً");
+
+        return;
+
+    }
+
+
+    if(!file.type.startsWith("video/")){
+
+        alert("الملف المختار ليس فيديو");
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload = function(e){
+
+        const video = {
+
+            id: generateId(),
+
+            title: title,
+
+            description: description,
+
+            video: e.target.result,
+
+            author: ADMIN_EMAIL,
+
+            likes: 0,
+
+            dislikes: 0,
+
+            views: 0,
+
+            followers: 0,
+
+            comments: [],
+
+            likedBy: [],
+
+            dislikedBy: [],
+
+            followedBy: [],
+
+            createdAt: Date.now()
+
+        };
+
+
+        videos.unshift(video);
+
+        saveVideos();
+
+        renderVideos();
+
+
+        document.getElementById("videoTitle").value = "";
+
+        document.getElementById("videoDescription").value = "";
+
+        document.getElementById("videoFile").value = "";
+
+
+        alert("تم نشر الفيديو بنجاح 🎉");
+
+    };
+
+
+    reader.readAsDataURL(file);
+
+}
+
+
+/*
+====================================================
+ حفظ الفيديوهات
+====================================================
+*/
+
+function saveVideos(){
+
+    try{
+
+        localStorage.setItem(
+            "videohub_videos",
+            JSON.stringify(videos)
+        );
+
+    }catch(error){
+
+        alert(
+            "تعذر حفظ الفيديو. قد يكون حجم الفيديو كبيرًا جدًا."
+        );
+
+    }
+
+}
+
+
+/*
+====================================================
+ عرض الفيديوهات
+====================================================
+*/
+
+function renderVideos(){
+
+    const grid =
+        document.getElementById("videoGrid");
+
+    const search =
+        document
+        .getElementById("search")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    let filtered =
+        videos.filter(video =>
+            video.title
+            .toLowerCase()
+            .includes(search)
+        );
+
+
+    grid.innerHTML = "";
+
+
+    if(filtered.length === 0){
+
+        grid.innerHTML = `
+            <div class="empty">
+                🎬 لا توجد فيديوهات حاليًا
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    filtered.forEach(video => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "video-card";
+
+
+        card.innerHTML = `
+
+            <video
+                controls
+                preload="metadata"
+                src="${video.video}"
+                onplay="addView('${video.id}')"
+            ></video>
+
+            <div class="video-info">
+
+                <div class="video-title">
+                    ${escapeHTML(video.title)}
+                </div>
+
+                <div class="video-description">
+                    ${escapeHTML(video.description || "")}
+                </div>
+
+                <div class="stats">
+
+                    <span>
+                        👁️ ${video.views}
+                    </span>
+
+                    <span>
+                        ❤️ ${video.likes}
+                    </span>
+
+                    <span>
+                        👎 ${video.dislikes}
+                    </span>
+
+                    <span>
+                        👤 ${video.followers}
+                    </span>
+
+                </div>
+
+
+                <div class="actions">
+
+                    <button
+                        id="like-${video.id}"
+                        onclick="likeVideo('${video.id}')"
+                    >
+                        ❤️ ${video.likes}
+                    </button>
+
+                    <button
+                        id="dislike-${video.id}"
+                        onclick="dislikeVideo('${video.id}')"
+                    >
+                        👎 ${video.dislikes}
+                    </button>
+
+                </div>
+
+
+                <button
+                    class="follow"
+                    id="follow-${video.id}"
+                    onclick="followUser('${video.id}')"
+                >
+                    متابعة 👤
+                </button>
+
+
+                <div class="comments">
+
+                    <div class="comment-list">
+
+                        ${
+                            video.comments
+                            .map(c => `
+                                <div class="comment">
+                                    <b>${escapeHTML(c.user)}</b>
+                                    <br>
+                                    ${escapeHTML(c.text)}
+                                </div>
+                            `)
+                            .join("")
+                        }
+
+                    </div>
+
+
+                    <div class="comment-input">
+
+                        <input
+                            id="comment-${video.id}"
+                            placeholder="اكتب تعليقًا..."
+                        >
+
+                        <button
+                            onclick="addComment('${video.id}')"
+                        >
+                            إرسال
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                ${
+                    currentUser === ADMIN_EMAIL
+                    ?
+                    `
+                    <button
+                        class="follow delete-btn"
+                        onclick="deleteVideo('${video.id}')"
+                    >
+                        🗑️ حذف الفيديو
+                    </button>
+                    `
+                    :
+                    ""
+                }
+
+            </div>
+        `;
+
+
+        grid.appendChild(card);
+
+        updateButtons(video);
+
+    });
+
+}
+
+
+/*
+====================================================
+ المشاهدات
+====================================================
+*/
+
+function addView(id){
+
+    const video =
+        videos.find(v => v.id === id);
+
+    if(!video) return;
+
+    if(
+        sessionStorage.getItem(
+            "viewed_" + id
+        )
+    ) return;
+
+
+    video.views++;
+
+    sessionStorage.setItem(
+        "viewed_" + id,
+        "1"
+    );
+
+    saveVideos();
+
+    renderVideos();
+
+}
+
+
+/*
+====================================================
+ لايك
+====================================================
+*/
+
+function likeVideo(id){
+
+    let video =
+        videos.find(v => v.id === id);
+
+    if(!video) return;
+
+
+    const user =
+        currentUser || getGuestId();
+
+
+    if(video.likedBy.includes(user)){
+
+        video.likedBy =
+            video.likedBy.filter(x => x !== user);
+
+        video.likes--;
+
+    }else{
+
+        video.likedBy.push(user);
+
+        video.likes++;
+
+
+        if(video.dislikedBy.includes(user)){
+
+            video.dislikedBy =
+                video.dislikedBy.filter(x => x !== user);
+
+            video.dislikes--;
+
+        }
+
+    }
+
+
+    saveVideos();
+
+    renderVideos();
+
+}
+
+
+/*
+====================================================
+ دس لايك
+====================================================
+*/
+
+function dislikeVideo(id){
+
+    let video =
+        videos.find(v => v.id === id);
+
+    if(!video) return;
+
+
+    const user =
+        currentUser || getGuestId();
+
+
+    if(video.dislikedBy.includes(user)){
+
+        video.dislikedBy =
+            video.dislikedBy.filter(x => x !== user);
+
+        video.dislikes--;
+
+    }else{
+
+        video.dislikedBy.push(user);
+
+        video.dislikes++;
+
+
+        if(video.likedBy.includes(user)){
+
+            video.likedBy =
+                video.likedBy.filter(x => x !== user);
+
+            video.likes--;
+
+        }
+
+    }
+
+
+    saveVideos();
+
+    renderVideos();
+
+}
+
+
+/*
+====================================================
+ متابعة
+====================================================
+*/
+
+function followUser(id){
+
+    const video =
+        videos.find(v => v.id === id);
+
+    if(!video) return;
+
+
+    const user =
+        currentUser || getGuestId();
+
+
+    if(video.followedBy.includes(user)){
+
+        video.followedBy =
+            video.followedBy.filter(x => x !== user);
+
+        video.followers--;
+
+    }else{
+
+        video.followedBy.push(user);
+
+        video.followers++;
+
+    }
+
+
+    saveVideos();
+
+    renderVideos();
+
+}
+
+
+/*
+====================================================
+ التعليقات
+====================================================
+*/
+
+function addComment(id){
+
+    const input =
+        document.getElementById(
+            "comment-" + id
+        );
+
+
+    const text =
+        input.value.trim();
+
+
+    if(!text){
+
+        return;
+
+    }
+
+
+    const video =
+        videos.find(v => v.id === id);
+
+
+    if(!video) return;
+
+
+    const user =
+        currentUser || "زائر";
+
+
+    video.comments.push({
+
+        user: user,
+
+        text: text,
+
+        date: Date.now()
+
+    });
+
+
+    saveVideos();
+
+    renderVideos();
+
+}
+
+
+/*
+====================================================
+ حذف الفيديو
+====================================================
+*/
+
+function deleteVideo(id){
+
+    if(currentUser !== ADMIN_EMAIL){
+
+        alert("ليس لديك صلاحية الحذف");
+
+        return;
+
+    }
+
+
+    if(!confirm("هل تريد حذف الفيديو؟")){
+
+        return;
+
+    }
+
+
+    videos =
+        videos.filter(v => v.id !== id);
+
+
+    saveVideos();
+
+    renderVideos();
+
+}
+
+
+/*
+====================================================
+ زائر مجهول
+====================================================
+*/
+
+function getGuestId(){
+
+    let id =
+        localStorage.getItem(
+            "videohub_guest"
+        );
+
+
+    if(!id){
+
+        id =
+            "guest_" +
+            generateId();
+
+        localStorage.setItem(
+            "videohub_guest",
+            id
+        );
+
+    }
+
+
+    return id;
+
+}
+
+
+/*
+====================================================
+ تحديث الأزرار
+====================================================
+*/
+
+function updateButtons(video){
+
+    const user =
+        currentUser || getGuestId();
+
+
+    const like =
+        document.getElementById(
+            "like-" + video.id
+        );
+
+    const dislike =
+        document.getElementById(
+            "dislike-" + video.id
+        );
+
+    const follow =
+        document.getElementById(
+            "follow-" + video.id
+        );
+
+
+    if(video.likedBy.includes(user)){
+
+        like.classList.add("liked");
+
+    }
+
+
+    if(video.dislikedBy.includes(user)){
+
+        dislike.classList.add("disliked");
+
+    }
+
+
+    if(video.followedBy.includes(user)){
+
+        follow.classList.add("active");
+
+        follow.innerHTML =
+            "✓ تمت المتابعة";
+
+    }
+
+}
+
+
+/*
+====================================================
+ حماية HTML من الأكواد
+====================================================
+*/
+
+function escapeHTML(text){
+
+    return String(text)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/*
+====================================================
+ التشغيل
+====================================================
+*/
+
+showAdmin();
+
+renderVideos();
+
+</script>
+
+</body>
+</html>
