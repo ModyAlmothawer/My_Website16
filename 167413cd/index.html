@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات حساسية فري فاير</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        body {
+            background: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: linear-gradient(135deg, #ff0000, #000);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 50px #ff0000;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #fff;
+        }
+        .sensitivity {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .sensitivity-item {
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #ff0000;
+        }
+        .sensitivity-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #ff0000;
+        }
+        .sensitivity-value {
+            font-size: 2rem;
+            text-align: center;
+            background: #000;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #ff0000;
+        }
+        .btn {
+            background: #ff0000;
+            color: #fff;
+            padding: 15px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn:disabled {
+            background: #555;
+        }
+        .vip-section {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            box-shadow: 0 0 40px #ff0000;
+        }
+        .vip-title {
+            font-size: 2rem;
+            text-align: center;
+            color: #ff0000;
+            margin-bottom: 20px;
+        }
+        .input-code {
+            padding: 15px;
+            font-size: 1.5rem;
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .alert {
+            display: none;
+            background: #ff0000;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff0000;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .settings-menu {
+            display: none;
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #ff0000;
+            z-index: 1000;
+        }
+        .settings-menu a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .settings-menu a:hover {
+            color: #ff0000;
+        }
+        /* تصميمات قوية لقسم VIP */
+        .vip-section {
+            background: linear-gradient(135deg, #ff0000, #000);
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 40px #ff0000;
+        }
+        .vip-section .sensitivity-item {
+            background: linear-gradient(135deg, #ff0000, #222);
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 20px #ff0000;
+        }
+        .vip-section .sensitivity-title {
+            color: #fff;
+            text-shadow: 0 0 10px #ff0000;
+        }
+        .vip-section .sensitivity-value {
+            background: #000;
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+        }
+        /* إطار التحديث */
+        .update-frame {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ff0000, #000);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px #ff0000;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #fff;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="settings-btn" onclick="toggleSettingsMenu()">⚙️</button>
+        <div class="settings-menu" id="settingsMenu">
+            <a href="https://t.me/MAX_DO_V" target="_blank">تواصل على تليغرام</a>
+            <a href="https://www.facebook.com/dzsifodz" target="_blank">تواصل على فيسبوك</a>
+            <a href="https://www.instagram.com/sifo9873?igsh=YzB1aTA4bXYzY2U=" target="_blank">تواصل على انستغرام</a>
+        </div>
+
+        <h1>إعدادات حساسية فري فاير</h1>
+
+        <!-- قسم الحساسية العادية (المجانية) -->
+        <div class="sensitivity">
+            <div class="sensitivity-item">
+                <div class="sensitivity-title">🔴 النقطة الحمراء</div>
+                <div class="sensitivity-value" id="redDot">90</div>
+            </div>
+            <div class="sensitivity-item">
+                <div class="sensitivity-title">🔍 عدسة ×2</div>
+                <div class="sensitivity-value" id="x2Scope">75</div>
+            </div>
+            <div class="sensitivity-item">
+                <div class="sensitivity-title">🎯 عدسة ×4</div>
+                <div class="sensitivity-value" id="x4Scope">60</div>
+            </div>
+            <div class="sensitivity-item">
+                <div class="sensitivity-title">🎯 عدسة قناصة</div>
+                <div class="sensitivity-value" id="sniperScope">50</div>
+            </div>
+            <div class="sensitivity-item">
+                <div class="sensitivity-title">📸 زر الكاميرا الحرة</div>
+                <div class="sensitivity-value" id="freeCamera">80</div>
+            </div>
+        </div>
+
+        <!-- زر تحديث الحساسية -->
+        <button class="btn" id="updateBtn" onclick="updateSensitivity()">تحديث الحساسية</button>
+
+        <!-- إشعار انتظار 5 دقائق -->
+        <div class="alert" id="waitAlert">لا يمكنك التحديث الآن، يرجى الانتظار <span id="timeRemaining"></span>.</div>
+
+        <!-- زر فتح VIP -->
+        <button class="btn" onclick="toggleVipInput()">فتح حساسية VIP</button>
+
+        <!-- إدخال كود التفعيل -->
+        <div class="vip-section" id="vipInput">
+            <input type="password" class="input-code" id="vipCode" placeholder="أدخل كود التفعيل">
+            <button class="btn" onclick="checkVipCode()">تفعيل VIP</button>
+        </div>
+
+        <!-- قسم حساسية VIP -->
+        <div class="vip-section" id="vipSection">
+            <div class="vip-title">قسم حساسية VIP</div>
+            <div class="sensitivity">
+                <div class="sensitivity-item">
+                    <div class="sensitivity-title">🔥 حساسية النخبة</div>
+                    <div class="sensitivity-value" id="eliteSensitivity">100</div>
+                </div>
+                <div class="sensitivity-item">
+                    <div class="sensitivity-title">⚡ استجابة سريعة</div>
+                    <div class="sensitivity-value" id="quickResponse">95</div>
+                </div>
+                <div class="sensitivity-item">
+                    <div class="sensitivity-title">🚀 دقة محترف</div>
+                    <div class="sensitivity-value" id="proAccuracy">98</div>
+                </div>
+                <div class="sensitivity-item">
+                    <div class="sensitivity-title">🎯 عدسة قناصة VIP</div>
+                    <div class="sensitivity-value" id="vipSniperScope">85</div>
+                </div>
+                <div class="sensitivity-item">
+                    <div class="sensitivity-title">📸 زر الكاميرا الحرة VIP</div>
+                    <div class="sensitivity-value" id="vipFreeCamera">90</div>
+                </div>
+            </div>
+            <!-- زر تحديث حساسية VIP -->
+            <button class="btn" onclick="updateVipSensitivity()">تحديث حساسية VIP</button>
+        </div>
+
+        <!-- إطار التحديث -->
+        <div class="update-frame" id="updateFrame">تم التحديث بنجاح!</div>
+    </div>
+
+    <!-- أصوات تفاعلية -->
+    <audio id="clickSound">
+        <source src="https://assets.mixkit.co/active_storage/sfx/3005/3005-preview.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="successSound">
+        <source src="https://assets.mixkit.co/active_storage/sfx/1123/1123-preview.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="errorSound">
+        <source src="https://assets.mixkit.co/active_storage/sfx/1084/1084-preview.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        let updateCount = parseInt(localStorage.getItem('updateCount')) || 0;
+        let lastUpdate = parseInt(localStorage.getItem('lastUpdate')) || 0;
+
+        // وظيفة تشغيل الصوت
+        function playSound(soundId) {
+            const sound = document.getElementById(soundId);
+            sound.currentTime = 0; // إعادة الصوت إلى البداية
+            sound.play();
+        }
+
+        // وظيفة عرض الوقت المتبقي
+        function showTimeRemaining() {
+            const now = Date.now();
+            const timeRemaining = 300000 - (now - lastUpdate); // 5 دقائق = 300000 مللي ثانية
+            if (timeRemaining > 0) {
+                const minutes = Math.floor(timeRemaining / 60000);
+                const seconds = Math.floor((timeRemaining % 60000) / 1000);
+                document.getElementById('timeRemaining').textContent = `${minutes} دقائق و ${seconds} ثواني`;
+            } else {
+                document.getElementById('timeRemaining').textContent = '0 دقائق و 0 ثواني';
+            }
+        }
+
+        // وظيفة تحديث الحساسية العادية
+        function updateSensitivity() {
+            const now = Date.now();
+            if (updateCount >= 3) {
+                if (now - lastUpdate < 300000) { // 5 دقائق = 300000 مللي ثانية
+                    document.getElementById('waitAlert').style.display = 'block';
+                    showTimeRemaining();
+                    playSound('errorSound');
+                    return;
+                } else {
+                    updateCount = 0;
+                    localStorage.setItem('updateCount', 0);
+                }
+            }
+            updateCount++;
+            lastUpdate = now;
+            localStorage.setItem('updateCount', updateCount);
+            localStorage.setItem('lastUpdate', lastUpdate);
+
+            // تحديث الحساسيات بشكل عشوائي
+            document.getElementById('redDot').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('x2Scope').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('x4Scope').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('sniperScope').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('freeCamera').textContent = Math.floor(Math.random() * 100);
+
+            // إظهار إطار التحديث
+            const updateFrame = document.getElementById('updateFrame');
+            updateFrame.style.display = 'block';
+            playSound('successSound');
+            setTimeout(() => {
+                updateFrame.style.display = 'none';
+            }, 3000); // إخفاء الإطار بعد 3 ثوانٍ
+        }
+
+        // وظيفة تحديث حساسية VIP
+        function updateVipSensitivity() {
+            // تحديث حساسيات VIP بشكل عشوائي
+            document.getElementById('eliteSensitivity').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('quickResponse').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('proAccuracy').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('vipSniperScope').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('vipFreeCamera').textContent = Math.floor(Math.random() * 100);
+
+            // إظهار إطار التحديث
+            const updateFrame = document.getElementById('updateFrame');
+            updateFrame.style.display = 'block';
+            playSound('successSound');
+            setTimeout(() => {
+                updateFrame.style.display = 'none';
+            }, 3000); // إخفاء الإطار بعد 3 ثوانٍ
+        }
+
+        function toggleVipInput() {
+            document.getElementById('vipInput').style.display = 'block';
+            playSound('clickSound');
+        }
+
+        function checkVipCode() {
+            const code = document.getElementById('vipCode').value;
+            if (code === '024674') {
+                document.getElementById('vipSection').style.display = 'block';
+                document.getElementById('vipInput').style.display = 'none';
+                playSound('successSound');
+                alert('تم تفعيل حساسية VIP!');
+            } else {
+                playSound('errorSound');
+                alert('كود خاطئ! حاول مرة أخرى.');
+            }
+        }
+
+        function toggleSettingsMenu() {
+            const settingsMenu = document.getElementById('settingsMenu');
+            if (settingsMenu.style.display === 'block') {
+                settingsMenu.style.display = 'none';
+            } else {
+                settingsMenu.style.display = 'block';
+            }
+            playSound('clickSound');
+        }
+    </script>
+</body>
+</html>
