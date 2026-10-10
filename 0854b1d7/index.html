@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d1b">
+<title>ZSNO | محول الكيبورد</title>
+<style>
+:root {
+  --bg:#080d1b;
+  --panel:#111b31;
+  --cyan:#48d9ff;
+  --text:#f3f7ff;
+  --muted:#9aa9c2;
+  --border:rgba(116,174,222,.2);
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  min-height:100vh;
+  padding:22px 14px 35px;
+  font-family:Arial,Tahoma,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(ellipse at 15% 5%,#12334b 0,transparent 40%),
+    radial-gradient(ellipse at 90% 80%,#211b48 0,transparent 35%),
+    var(--bg);
+}
+.app {max-width:900px;margin:auto}
+header {
+  display:flex;justify-content:space-between;
+  align-items:center;gap:12px;margin-bottom:35px;
+}
+.brand {display:flex;align-items:center;gap:12px;font-weight:bold}
+.logo {
+  width:46px;height:46px;display:grid;place-items:center;
+  border-radius:15px;color:#06101d;font-size:25px;
+  background:linear-gradient(135deg,#8aeaff,#25b9f0);
+  box-shadow:0 0 25px #48d9ff30;
+}
+.brand small {display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.status {
+  padding:8px 11px;border-radius:30px;font-size:11px;
+  color:#9df4c5;background:#16352b;border:1px solid #28533e;
+}
+.hero{text-align:center;margin-bottom:27px}
+.eyebrow {color:var(--cyan);font-size:12px;font-weight:bold;letter-spacing:2px}
+h1 {font-size:clamp(28px,5vw,43px);margin:12px 0}
+h1 span {color:var(--cyan)}
+.hero p {color:var(--muted);font-size:14px;line-height:1.9}
+.workspace {display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.panel {
+  padding:17px;border-radius:20px;
+  background:linear-gradient(145deg,#15213a,#0a1121);
+  border:1px solid var(--border);
+  box-shadow:0 15px 40px #0003;
+  min-width:0;
+}
+.panel-head {
+  display:flex;justify-content:space-between;
+  align-items:center;gap:8px;margin-bottom:13px;
+}
+.panel-title {font-weight:bold;font-size:14px}
+.lang {
+  font-size:11px;color:var(--cyan);padding:6px 9px;
+  background:#48d9ff12;border:1px solid #48d9ff25;border-radius:8px;
+}
+textarea {
+  display:block;width:100%;height:190px;resize:vertical;
+  padding:14px;border-radius:13px;
+  border:1px solid #859dc52b;background:#030813b8;
+  color:var(--text);font-family:Arial,Tahoma,sans-serif;
+  font-size:17px;line-height:1.9;outline:none;
+}
+textarea:focus {border-color:#48d9ff99;box-shadow:0 0 0 3px #48d9ff12}
+textarea::placeholder {color:#65748e}
+#input {direction:ltr;text-align:left}
+#output {direction:rtl;text-align:right}
+.panel-foot {
+  display:flex;justify-content:space-between;gap:8px;
+  margin-top:10px;color:var(--muted);font-size:11px;
+}
+.actions {display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+button {
+  padding:12px 15px;border-radius:12px;
+  font-family:inherit;font-size:13px;font-weight:bold;
+  cursor:pointer;transition:.2s;
+}
+button:hover {transform:translateY(-2px)}
+.primary {
+  flex:1;border:0;color:#04111d;
+  background:linear-gradient(135deg,#76e8ff,#20b9ed);
+}
+.secondary {
+  color:#dce9ff;background:#7c99c314;
+  border:1px solid var(--border);
+}
+.danger {
+  color:#ff9aaa;background:#ff6d8610;
+  border:1px solid #ff6d8630;
+}
+.hint {
+  margin-top:17px;padding:15px;border-radius:13px;
+  border:1px solid #48d9ff20;background:#48d9ff08;
+  color:var(--muted);font-size:12px;line-height:1.9;
+}
+.hint strong {color:#dff8ff}
+.keyboard {
+  margin-top:22px;padding:16px;border-radius:17px;
+  background:#0a1120bb;border:1px solid var(--border);
+}
+.keyboard-title {
+  display:flex;justify-content:space-between;
+  gap:10px;margin-bottom:13px;font-size:13px;
+}
+.keyboard-title span {color:var(--muted);font-size:11px}
+.key-rows {display:grid;gap:6px}
+.key-row {display:flex;justify-content:center;gap:4px}
+.key {
+  flex:1;min-width:0;text-align:center;padding:8px 1px;
+  border-radius:7px;background:linear-gradient(#17243b,#101a2d);
+  border:1px solid #8badd521;color:#d7e8ff;font-size:11px;
+}
+.key em {
+  display:block;color:var(--cyan);font-style:normal;
+  font-weight:bold;font-size:13px;margin-top:3px;
+}
+footer {text-align:center;margin-top:23px;color:#71819c;font-size:11px}
+#toast {
+  position:fixed;bottom:20px;left:50%;
+  transform:translate(-50%,20px);opacity:0;
+  pointer-events:none;padding:12px 17px;border-radius:12px;
+  background:#d9f9ff;color:#06101d;font-size:13px;font-weight:bold;
+  box-shadow:0 10px 35px #0005;transition:.25s;z-index:5;
+  width:max-content;max-width:90%;
+}
+#toast.show {opacity:1;transform:translate(-50%,0)}
+@media(max-width:650px) {
+  body {padding:18px 11px 28px}
+  header {margin-bottom:27px}
+  .workspace {grid-template-columns:1fr}
+  textarea {height:155px}
+  .panel {padding:14px}
+  .hero p {font-size:13px}
+  .key {font-size:9px;padding:7px 0}
+  .key em {font-size:11px}
+  .actions button {flex:1}
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="brand">
+      <div class="logo">⌨</div>
+      <div>ZSNO<small>SMART KEYBOARD</small></div>
+    </div>
+    <div class="status">● يعمل مباشرةً</div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">ENGLISH → ARABIC</div>
+    <h1>محول الكيبورد <span>الذكي</span></h1>
+    <p>اكتب والكيبورد إنجليزي، وشوف النص العربي يتحوّل تلقائياً لحظة بلحظة.</p>
+  </section>
+
+  <section class="workspace">
+    <article class="panel">
+      <div class="panel-head">
+        <div class="panel-title">✍️ النص الأصلي</div>
+        <span class="lang">ENGLISH</span>
+      </div>
+      <textarea id="input" placeholder="Type here... اكتب هنا" spellcheck="false"></textarea>
+      <div class="panel-foot">
+        <span>النص قبل التحويل</span>
+        <span id="inputCount">0 حرف</span>
+      </div>
+    </article>
+
+    <article class="panel">
+      <div class="panel-head">
+        <div class="panel-title">✨ النص العربي</div>
+        <span class="lang">العربية</span>
+      </div>
+      <textarea id="output" placeholder="الناتج العربي يظهر هنا..." readonly></textarea>
+      <div class="panel-foot">
+        <span id="resultStatus">جاهز للتحويل</span>
+        <span id="outputCount">0 حرف</span>
+      </div>
+    </article>
+  </section>
+
+  <div class="actions">
+    <button class="primary" id="copyBtn">📋 نسخ النص العربي</button>
+    <button class="secondary" id="swapBtn">⇄ تبديل اتجاه العرض</button>
+    <button class="danger" id="clearBtn">✕ مسح الكل</button>
+  </div>
+
+  <div class="hint">
+    💡 <div><strong>ملاحظة:</strong> هذا تحويل حسب مواقع مفاتيح الكيبورد، وليس ترجمة للمعاني. التحويل يتم داخل جهازك دون إرسال النص إلى سيرفر.</div>
+  </div>
+
+  <section class="keyboard">
+    <div class="keyboard-title">
+      <strong>⌨️ خريطة الأحرف</strong>
+      <span>English / عربي</span>
+    </div>
+    <div class="key-rows">
+      <div class="key-row">
+        <div class="key">q<em>ض</em></div><div class="key">w<em>ص</em></div>
+        <div class="key">e<em>ث</em></div><div class="key">r<em>ق</em></div>
+        <div class="key">t<em>ف</em></div><div class="key">y<em>غ</em></div>
+        <div class="key">u<em>ع</em></div><div class="key">i<em>ه</em></div>
+        <div class="key">o<em>خ</em></div><div class="key">p<em>ح</em></div>
+        <div class="key">[<em>ج</em></div><div class="key">]<em>د</em></div>
+      </div>
+      <div class="key-row">
+        <div class="key">a<em>ش</em></div><div class="key">s<em>س</em></div>
+        <div class="key">d<em>ي</em></div><div class="key">f<em>ب</em></div>
+        <div class="key">g<em>ل</em></div><div class="key">h<em>ا</em></div>
+        <div class="key">j<em>ت</em></div><div class="key">k<em>ن</em></div>
+        <div class="key">l<em>م</em></div><div class="key">;<em>ك</em></div>
+        <div class="key">'<em>ط</em></div>
+      </div>
+      <div class="key-row">
+        <div class="key">z<em>ئ</em></div><div class="key">x<em>ء</em></div>
+        <div class="key">c<em>ؤ</em></div><div class="key">v<em>ر</em></div>
+        <div class="key">b<em>لا</em></div><div class="key">n<em>ى</em></div>
+        <div class="key">m<em>ة</em></div><div class="key">,<em>و</em></div>
+        <div class="key">.<em>ز</em></div><div class="key">/<em>ظ</em></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>ZSNO © <span id="year"></span> — بسيط، سريع، وأنيق</footer>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const keyboardMap = {
+  q:"ض",w:"ص",e:"ث",r:"ق",t:"ف",y:"غ",u:"ع",i:"ه",o:"خ",p:"ح",
+  "[":"ج","]":"د",a:"ش",s:"س",d:"ي",f:"ب",g:"ل",h:"ا",j:"ت",
+  k:"ن",l:"م",";":"ك","'":"ط",z:"ئ",x:"ء",c:"ؤ",v:"ر",b:"لا",
+  n:"ى",m:"ة",",":"و",".":"ز","/":"ظ","`":"ذ"," ":" "
+};
+
+const input = document.getElementById("input");
+const output = document.getElementById("output");
+const toast = document.getElementById("toast");
+let toastTimer;
+
+function convert(text) {
+  let result = "";
+  for (const char of text) {
+    const key = char.toLowerCase();
+    result += Object.prototype.hasOwnProperty.call(keyboardMap,key)
+      ? keyboardMap[key] : char;
+  }
+  return result;
+}
+
+function update() {
+  output.value = convert(input.value);
+  document.getElementById("inputCount").textContent =
+    input.value.length + " حرف";
+  document.getElementById("outputCount").textContent =
+    output.value.length + " حرف";
+  document.getElementById("resultStatus").textContent =
+    input.value ? "تم التحويل تلقائياً ✓" : "جاهز للتحويل";
+}
+
+function notify(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"),2200);
+}
+
+async function copyArabic() {
+  if (!output.value) {
+    notify("اكتب نصاً أولاً حتى تنسخه");
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(output.value);
+    notify("تم نسخ النص العربي بنجاح ✓");
+  } catch (error) {
+    output.focus();
+    output.select();
+    const success = document.execCommand("copy");
+    input.focus();
+    notify(success ? "تم نسخ النص العربي بنجاح ✓" : "حدد النص وانسخه يدوياً");
+  }
+}
+
+input.addEventListener("input",update);
+document.getElementById("copyBtn").addEventListener("click",copyArabic);
+
+document.getElementById("clearBtn").addEventListener("click",() => {
+  input.value = "";
+  update();
+  input.focus();
+  notify("تم مسح النص");
+});
+
+document.getElementById("swapBtn").addEventListener("click",() => {
+  const rtl = input.dataset.rtl !== "true";
+  input.dataset.rtl = String(rtl);
+  input.style.direction = rtl ? "rtl" : "ltr";
+  input.style.textAlign = rtl ? "right" : "left";
+  output.style.direction = rtl ? "ltr" : "rtl";
+  output.style.textAlign = rtl ? "left" : "right";
+  notify(rtl ? "تم تبديل اتجاه العرض" : "تمت إعادة الاتجاه الافتراضي");
+});
+
+document.getElementById("year").textContent = new Date().getFullYear();
+update();
+</script>
+</body>
+</html>
