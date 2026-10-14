@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تلفزيوني</title><link rel="stylesheet" href="style.css"></head><body>
+<canvas id="bg"></canvas>
+<header><div class="logo" id="siteName"></div><button class="ghost" id="devBtn">⚙ لوحة المطور</button></header>
+<main>
+ <div class="player" id="player"></div>
+ <div id="now">اختر قناة للمشاهدة</div>
+ <input type="search" id="search" placeholder="🔍 ابحث عن قناة...">
+ <div class="tabs" id="tabs"></div>
+ <div class="grid" id="grid"></div>
+</main>
+
+<div class="modal" id="loginModal"><div class="box">
+ <h3>🔐 دخول المطور</h3>
+ <input id="u" placeholder="اسم المستخدم"><input id="p" type="password" placeholder="كلمة المرور">
+ <div class="err" id="err"></div>
+ <div class="row"><button id="loginGo">دخول</button><button class="ghost" data-close>إغلاق</button></div>
+</div></div>
+
+<div class="modal" id="adminModal"><div class="box">
+ <h3>🛠 لوحة المطور</h3>
+ <input id="cn" placeholder="اسم القناة"><input id="cu" placeholder="رابط البث (m3u8 أو رابط embed)">
+ <input id="cl" placeholder="رابط الشعار (اختياري)"><input id="cc" placeholder="التصنيف (مثال: رياضة)">
+ <div class="row"><button id="add">➕ إضافة قناة</button><button class="ghost" id="logout">خروج</button><button class="ghost" data-close>إغلاق</button></div>
+ <div class="list" id="adminList"></div>
+</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.7/hls.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body></html>
