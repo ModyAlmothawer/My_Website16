@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>زهقان؟ تعالى سلي نفسك</title>
+<style>
+body{background:#1a1a2e;color:#fff;font-family:system-ui;text-align:center;margin:0;padding:20px}
+h1{font-size:40px}
+.card{background:#16213e;padding:25px;border-radius:20px;margin:20px auto;max-width:500px;box-shadow:0 10px 30px #000}
+button{background:#e94560;border:0;color:#fff;padding:15px 25px;border-radius:50px;font-size:18px;cursor:pointer;margin:8px;transition:.2s}
+button:hover{transform:scale(1.1)}
+#game{font-size:80px;cursor:pointer;user-select:none}
+</style>
+</head>
+<body>
+<h1>😵‍💫 زهقان؟</h1>
+
+<div class="card">
+<h2>🎰 حظك اليوم</h2>
+<p id="fortune">دوس عشان تعرف</p>
+<button onclick="fortune()">شوف حظك</button>
+</div>
+
+<div class="card">
+<h2>🐥 اضرب البطة</h2>
+<div id="game" onclick="hit()">🦆</div>
+<p>النقاط: <span id="score">0</span></p>
+</div>
+
+<div class="card">
+<h2>😂 نكتة عشوائية</h2>
+<p id="joke">مرة واحد...</p>
+<button onclick="joke()">نكتة تانية</button>
+</div>
+
+<div class="card">
+<h2>🤔 أسئلة محرجة</h2>
+<p id="q">دوس</p>
+<button onclick="question()">سؤال محرج</button>
+</div>
+
+<script>
+let s=0;
+const fortunes=["هتبقى غني قريب... بس قريب دي بعد 40 سنة","هتاكل محشي النهاردة","حد هيعملك بلوك النهاردة","هتلاقي 5 جنيه في الشارع","الموبايل هيقع بس مش هيتكسر، معجزة"];
+const jokes=["مرة واحد نام... صحي لقى نفسه لسه نايم","واحد بيقول لصاحبه: الحقني البيت بيولع! قاله: طفيه وانت بتكلمني؟","مرة كتكوت راح للسوبرماركت قاله عندك كاتشب؟ قاله لا، قاله طب كاتشب؟","واحد غبي راح يخطب، أبو العروسة قاله مهرك كام؟ قاله شبكة WE"];
+const qs=["لو بقيت شبح هتخوف مين أول واحد؟","أغبى كذبة كذبتها ايه؟","لو معاك 10 مليون هتعمل ايه أول حاجة؟","مين أكتر واحد عاملّك seen؟"];
+
+function fortune(){document.getElementById('fortune').innerText=fortunes[Math.floor(Math.random()*fortunes.length)]}
+function joke(){document.getElementById('joke').innerText=jokes[Math.floor(Math.random()*jokes.length)]}
+function question(){document.getElementById('q').innerText=qs[Math.floor(Math.random()*qs.length)]}
+function hit(){
+ s++; document.getElementById('score').innerText=s;
+ const e=["🦆","🐔","🦢","🐥"]; 
+ document.getElementById('game').innerText=e[Math.floor(Math.random()*e.length)];
+ if(s==10) alert("انت أسطورة ضرب البط 🦆🔥")
+}
+</script>
+</body>
+</html>
