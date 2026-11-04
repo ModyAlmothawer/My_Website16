@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DARK TV</title>
+<style>
+:root{--bg:#050505;--panel:#0e0e11;--panel2:#17171c;--tx:#ececec;--mut:#8a8a96;--a:#ff1e3c;--b:#a100ff;--c:#ffb000;--line:#2a2a33;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#efeaff;--panel:#fff;--panel2:#f3efff;--tx:#1a1533;--mut:#6a6490;--a:#008c7a;--b:#d4146f;--c:#b78900;--line:#d5cdf5}}
+:root[data-theme="light"]{--bg:#efeaff;--panel:#fff;--panel2:#f3efff;--tx:#1a1533;--mut:#6a6490;--a:#008c7a;--b:#d4146f;--c:#b78900;--line:#d5cdf5}
+:root[data-theme="dark"]{--bg:#050505;--panel:#0e0e11;--panel2:#17171c;--tx:#ececec;--mut:#8a8a96;--a:#ff1e3c;--b:#a100ff;--c:#ffb000;--line:#2a2a33}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--tx);font-family:"Tajawal","Segoe UI",Tahoma,sans-serif;min-height:100vh;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px),radial-gradient(ellipse at 50% -10%,color-mix(in srgb,var(--a) 26%,transparent),transparent 55%),radial-gradient(circle at 100% 100%,color-mix(in srgb,var(--b) 18%,transparent),transparent 45%);background-size:34px 34px,34px 34px,auto,auto;background-attachment:fixed}
+button,input,select{font:inherit;color:inherit}
+header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.logo{font-weight:900;font-size:22px;letter-spacing:1px;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sp{flex:1}
+.btn{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;transition:.2s}
+.btn:hover{border-color:var(--a);transform:translateY(-1px)}
+.btn.pri{background:linear-gradient(90deg,var(--a),var(--b));color:#06050d;font-weight:800;border:0}
+.btn.dng{border-color:var(--b);color:var(--b)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;padding:16px;max-width:1300px;margin:auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.tv{background:linear-gradient(145deg,#2b2750,#14122b);border-radius:28px;padding:18px 18px 14px;box-shadow:0 20px 60px #0008,inset 0 0 0 2px #ffffff14;position:relative}
+.tv::before,.tv::after{content:"";position:absolute;top:-22px;width:4px;height:30px;background:#6c64b5;border-radius:3px;transform-origin:bottom}
+.tv::before{right:38%;transform:rotate(22deg)}.tv::after{right:50%;transform:rotate(-22deg)}
+.screen{position:relative;aspect-ratio:16/9;background:#000;border-radius:18px;overflow:hidden;box-shadow:0 0 0 4px #0a0a14,0 0 30px color-mix(in srgb,var(--a) 40%,transparent)}
+.screen video,.screen iframe{width:100%;height:100%;border:0;background:#000;display:block}
+.screen::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#0000 0 2px,#0000002e 2px 3px);mix-blend-mode:multiply;border-radius:18px;box-shadow:inset 0 0 90px #000a}
+#noise{position:absolute;inset:0;width:100%;height:100%;z-index:3;display:none;pointer-events:none}
+.osd{position:absolute;top:12px;right:14px;z-index:4;font-family:monospace;font-size:26px;font-weight:900;color:var(--c);text-shadow:0 0 8px var(--c);opacity:0;transition:opacity .4s;pointer-events:none}
+.osd.on{opacity:1}
+.msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--mut);z-index:2;flex-direction:column;gap:8px}
+.ctl{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.now{flex:1;min-width:140px}.now b{display:block;font-size:18px}.now span{color:var(--mut);font-size:13px}
+.knobs{display:flex;gap:8px}
+.knob{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8f87d6,#2c2860);border:2px solid #0006;box-shadow:0 3px 6px #0008}
+.vol{accent-color:var(--a);width:110px}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:12px;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 100px);min-height:340px}
+@media(max-width:900px){aside{max-height:none}}
+.in{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;outline:0}
+.in:focus{border-color:var(--a)}
+.cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.chip{white-space:nowrap;padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;font-size:13px}
+.chip.on{background:var(--a);color:#06050d;border-color:var(--a);font-weight:800}
+.list{overflow-y:auto;display:flex;flex-direction:column;gap:6px;flex:1}
+.ch{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--panel2);border:1px solid transparent;cursor:pointer;transition:.15s}
+.ch:hover{border-color:var(--line)}
+.ch.on{border-color:var(--b);box-shadow:0 0 14px color-mix(in srgb,var(--b) 35%,transparent)}
+.num{font-family:monospace;color:var(--c);min-width:28px;font-weight:900}
+.ico{font-size:22px}
+.nm{flex:1;font-weight:700;font-size:14px}
+.cat{font-size:11px;color:var(--mut)}
+.star{background:none;border:0;cursor:pointer;font-size:18px;color:var(--mut)}.star.on{color:var(--c)}
+.empty{color:var(--mut);text-align:center;padding:20px;font-size:14px}
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.on{display:flex}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;width:100%;max-width:560px;max-height:90vh;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.box h2{font-size:20px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:520px){.row{grid-template-columns:1fr}}
+.adm{display:flex;align-items:center;gap:8px;padding:7px 9px;background:var(--panel2);border-radius:10px;font-size:13px}
+.adm span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hint{color:var(--mut);font-size:12px;line-height:1.7}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--a);color:#06050d;padding:9px 18px;border-radius:99px;font-weight:800;z-index:99;display:none}
+.logo{position:relative;font-size:28px;letter-spacing:4px;font-family:Impact,"Arial Black",sans-serif;background:none;color:var(--tx);-webkit-text-fill-color:currentColor;text-shadow:0 0 14px var(--a);animation:flick 5s infinite}
+.logo::before,.logo::after{content:attr(data-t);position:absolute;inset:0;overflow:hidden}
+.logo::before{color:var(--a);transform:translate(-2px,0);clip-path:inset(0 0 55% 0);animation:gl 2.6s infinite steps(2)}
+.logo::after{color:var(--b);transform:translate(2px,0);clip-path:inset(55% 0 0 0);animation:gl 3.1s infinite steps(2) reverse}
+@keyframes gl{0%,90%{transform:translate(0)}92%{transform:translate(-4px,1px)}96%{transform:translate(4px,-1px)}}
+@keyframes flick{0%,92%,100%{opacity:1}93%{opacity:.4}95%{opacity:.9}97%{opacity:.5}}
+.clock{font-family:monospace;color:var(--c);font-size:13px;border:1px solid var(--line);padding:4px 9px;border-radius:6px;background:#000}
+.ticker{overflow:hidden;white-space:nowrap;border-bottom:1px solid var(--a);background:#000;color:var(--a);font-family:monospace;font-size:13px;padding:6px 0}
+.ticker div{display:inline-block;padding-left:100%;animation:tk 45s linear infinite}
+@keyframes tk{to{transform:translateX(-100%)}}
+.tv{background:linear-gradient(145deg,#1b1b21,#050507);border:1px solid #333;box-shadow:0 0 0 1px #000,0 25px 70px #000,0 0 60px color-mix(in srgb,var(--a) 22%,transparent)}
+.tv::before,.tv::after{background:#555}
+.screen{box-shadow:0 0 0 5px #000,0 0 0 6px #333,0 0 40px color-mix(in srgb,var(--a) 45%,transparent)}
+.knob:first-child{background:radial-gradient(circle at 35% 30%,#ff8a99,#7a0014);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 14px var(--a)}}
+.btn.pri{color:#fff}
+.ch.on{border-color:var(--a);box-shadow:0 0 16px color-mix(in srgb,var(--a) 40%,transparent)}
+.chip.on{color:#fff}
+#hist{border-top:1px dashed var(--line);padding-top:8px}
+#hist b{color:var(--c);cursor:pointer;margin-inline-end:8px;white-space:nowrap}
+body.cin aside,body.cin header,body.cin .ticker,body.cin .hint{display:none}
+body.cin main{grid-template-columns:1fr;max-width:1100px}
+body.cin{background:#000}
+.remote{display:flex;gap:10px;margin-top:12px;background:#0a0a0d;border:1px solid var(--line);border-radius:18px;padding:10px}
+.remote .rk{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.remote .rs{width:92px;display:flex;flex-direction:column;gap:6px}
+.remote button{padding:10px 0;font-weight:800;font-family:monospace}
+body.norem .remote{display:none}
+body.nocrt .screen::after{display:none}
+body.notk .ticker{display:none}
+.list.grid{display:grid;grid-template-columns:1fr 1fr;align-content:start}
+.list.grid .ch{flex-direction:column;text-align:center;padding:12px 6px}
+.sw{display:inline-block;width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;margin:2px}
+.sw.on{border-color:#fff;box-shadow:0 0 10px currentColor}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;background:var(--panel2);border-radius:10px;font-size:14px}
+.opt input[type=checkbox]{width:20px;height:20px;accent-color:var(--a)}
+textarea.in{resize:vertical;font-family:monospace;font-size:12px}
+#rain{position:fixed;inset:0;z-index:-1;opacity:.35;pointer-events:none}
+body.norain #rain{display:none}
+.epg{font-size:12px;color:var(--c);margin-top:2px}
+#snk{background:#000;border:1px solid var(--a);border-radius:10px;width:100%;max-width:320px;align-self:center}
+.bar{height:8px;background:var(--a);border-radius:4px;margin-top:3px}
+</style>
+</head>
+<body>
+<canvas id="rain"></canvas>
+<header>
+  <div class="logo" data-t="DARK TV">DARK TV</div><div class="clock" id="clock"></div><div class="clock" id="cnt"></div>
+  <div class="sp"></div>
+  <button class="btn" id="bStat">📊 إحصائيات</button><button class="btn" id="bSet">🎛 خيارات</button><button class="btn" id="bCin">🌑 سينما</button><button class="btn" id="bTheme" title="الوضع">◐</button>
+  <button class="btn" id="bFav">★ المفضلة</button>
+  <button class="btn pri" id="bAdmin">⚙ لوحة المطور</button>
+</header>
+<div class="ticker" dir="ltr"><div id="tk"></div></div>
+
+<main>
+  <section>
+    <div class="tv">
+      <div class="screen" id="screen">
+        <div class="msg" id="msg"><div style="font-size:48px">📺</div><div>اختر قناة من القائمة لبدء المشاهدة</div></div>
+        <canvas id="noise"></canvas>
+        <div class="osd" id="osd"></div>
+      </div>
+      <div class="ctl">
+        <div class="now"><b id="nName">—</b><span id="nCat">لا توجد قناة</span><div class="epg" id="nEpg"></div></div>
+        <button class="btn" id="bPrev">⏮</button>
+        <button class="btn" id="bNext">⏭</button>
+        <button class="btn" id="bMute">🔊</button>
+        <input class="vol" id="vol" type="range" min="0" max="1" step="0.05" value="0.8">
+        <button class="btn" id="bFull">⛶</button><button class="btn" id="bPip" title="نافذة عائمة">▣</button><button class="btn" id="bRnd" title="قناة عشوائية">🎲</button><button class="btn" id="bSleep" title="مؤقت النوم">⏲</button><button class="btn" id="bShot" title="لقطة شاشة">📸</button><input class="vol" id="bri" type="range" min="0.4" max="1.6" step="0.05" value="1" title="السطوع">
+        <div class="knobs"><div class="knob"></div><div class="knob"></div></div>
+      </div>
+    </div>
+    <div class="remote" id="remote"></div>
+    <p class="hint" style="margin-top:10px">اختصارات: ↑ ↓ تغيير القناة · M كتم · F ملء الشاشة · اكتب رقم القناة للانتقال مباشرة.</p>
+  </section>
+
+  <aside>
+    <input class="in" id="q" placeholder="🔎 ابحث عن قناة…">
+    <div style="display:flex;gap:6px"><select class="in" id="sortSel"><option value="n">ترتيب: الأصلي</option><option value="name">ترتيب: الاسم</option><option value="cat">ترتيب: التصنيف</option></select><button class="btn" id="bView" title="قائمة / شبكة">▦</button></div>
+    <div class="cats" id="cats"></div>
+    <div class="list" id="list"></div>
+    <div class="hint" id="hist"></div>
+  </aside>
+</main>
+
+<div class="modal" id="mLogin"><div class="box">
+  <h2>🔐 دخول المطور</h2>
+  <input class="in" id="pw" type="password" placeholder="كلمة المرور">
+  <div class="hint">كلمة المرور الافتراضية: <b>admin123</b> — غيّرها بعد الدخول.</div>
+  <div style="display:flex;gap:8px"><button class="btn pri" id="doLogin">دخول</button><button class="btn" data-close>إلغاء</button></div>
+</div></div>
+
+<div class="modal" id="mAdmin"><div class="box">
+  <h2>⚙ لوحة المطور</h2>
+  <div class="row">
+    <input class="in" id="fName" placeholder="اسم القناة">
+    <input class="in" id="fIco" placeholder="رمز (إيموجي) مثل 📡">
+  </div>
+  <input class="in" id="fUrl" placeholder="رابط البث (m3u8 / mp4 / رابط تضمين)" dir="ltr">
+  <div class="row">
+    <input class="in" id="fCat" placeholder="التصنيف (أخبار، رياضة…)" list="catList">
+    <select class="in" id="fType"><option value="auto">تلقائي</option><option value="hls">HLS</option><option value="video">فيديو</option><option value="iframe">تضمين iframe</option></select>
+  </div>
+  <textarea class="in" id="fEpg" rows="3" placeholder="جدول البرامج: كل سطر مثل  20:00 نشرة الأخبار"></textarea>
+  <datalist id="catList"></datalist>
+  <div style="display:flex;gap:8px"><button class="btn pri" id="fSave">＋ إضافة / حفظ</button><button class="btn" id="fClear">مسح الحقول</button></div>
+  <div id="admList" style="display:flex;flex-direction:column;gap:6px"></div>
+  <hr style="border:0;border-top:1px solid var(--line)">
+  <div class="row">
+    <button class="btn" id="bExp">⬇ تصدير القنوات</button>
+    <button class="btn" id="bImp">⬆ استيراد</button>
+  </div>
+  <textarea class="in" id="m3u" rows="4" dir="ltr" placeholder="#EXTM3U … الصق قائمة M3U هنا"></textarea>
+  <div class="row"><button class="btn" id="bM3u">📥 استيراد M3U</button><button class="btn" id="bTest">🧪 فحص الروابط</button><button class="btn" id="bDup">♻ حذف المكرر</button><button class="btn dng" id="bCatDel">🗑 حذف تصنيف</button></div>
+  <div class="hint" id="stats"></div>
+  <input class="in" id="newPw" type="password" placeholder="كلمة مرور جديدة">
+  <div style="display:flex;gap:8px"><button class="btn" id="chgPw">تغيير كلمة المرور</button><button class="btn dng" id="reset">إعادة الضبط</button><button class="btn" data-close>إغلاق</button></div>
+  <div class="hint">⚠ القنوات وكلمة المرور تُحفظ في متصفحك فقط، وهذه حماية واجهة وليست حماية خادم. بعض الروابط قد تُحجب بسبب سياسات المواقع.</div>
+  <input type="file" id="file" accept=".json" hidden>
+</div></div>
+<div class="modal" id="mSet"><div class="box"><h2>🎛 الخيارات</h2><div id="setBox" style="display:flex;flex-direction:column;gap:8px"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dng" id="setReset">إعادة ضبط</button><button class="btn" id="bHelp">⌨ الاختصارات</button><button class="btn" id="bBkp">💾 نسخة احتياطية</button><button class="btn" id="bRst">♻ استرجاع</button><button class="btn" id="bGame">🐍 لعبة</button><button class="btn pri" data-close>تم</button></div></div></div>
+<input type="file" id="bkFile" accept=".json" hidden>
+<div class="modal" id="mStat"><div class="box"><h2>📊 إحصائيات المشاهدة</h2><div id="statBox" style="display:flex;flex-direction:column;gap:8px"></div><div style="display:flex;gap:8px"><button class="btn dng" id="statClr">مسح</button><button class="btn pri" data-close>إغلاق</button></div></div></div>
+<div class="modal" id="mGame"><div class="box"><h2>🐍 لعبة الثعبان</h2><div class="hint" id="sc">النقاط: 0</div><canvas id="snk" width="320" height="320"></canvas><div class="row"><button class="btn" data-g="u">▲</button><button class="btn" data-g="d">▼</button><button class="btn" data-g="l">◀</button><button class="btn" data-g="r">▶</button></div><button class="btn pri" data-close>إغلاق</button></div></div>
+<div class="modal" id="mHelp"><div class="box"><h2>⌨ الاختصارات</h2><div class="hint">↑ ↓ تغيير القناة<br>0–9 الانتقال لرقم قناة<br>L القناة السابقة<br>M كتم · + / − الصوت<br>F ملء الشاشة (أو نقرتان على الشاشة)<br>G تبديل القائمة / الشبكة<br>S الخيارات · ? هذه النافذة<br>Esc الخروج من وضع السينما</div><button class="btn pri" data-close>إغلاق</button></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
+<script>
+(function(){
+"use strict";
+var $=function(i){return document.getElementById(i)};
+var KEY="neonTV.v1",PKEY="neonTV.pw",TKEY="neonTV.theme",FKEY="neonTV.fav";
+var DEFAULT=[
+ {id:1,name:"قناة العرض التجريبي",ico:"🎬",cat:"تجريبي",type:"hls",url:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"},
+ {id:2,name:"بث Apple التجريبي",ico:"🍎",cat:"تجريبي",type:"hls",url:"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"},
+ {id:3,name:"قناة الوثائقيات",ico:"🌍",cat:"وثائقي",type:"hls",url:""},
+ {id:4,name:"قناة الأخبار",ico:"📰",cat:"أخبار",type:"hls",url:""}
+];
+var ch=[],fav=[],cur=null,cat="الكل",onlyFav=false,hls=null,editId=null,admin=false,buf="",bt=null;
+
+function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function toast(t){var e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display="none"},2200)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+async function sha(s){
+  try{var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("neon::"+s));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}
+  catch(e){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return "f"+h}
+}
+
+/* ---------- render ---------- */
+function cats(){
+  var set=["الكل"];ch.forEach(function(c){if(c.cat&&set.indexOf(c.cat)<0)set.push(c.cat)});
+  $("cats").innerHTML=set.map(function(c){return '<span class="chip'+(c===cat?" on":"")+'" data-c="'+esc(c)+'">'+esc(c)+'</span>'}).join("");
+  $("catList").innerHTML=set.slice(1).map(function(c){return '<option value="'+esc(c)+'">'}).join("");
+}
+function visible(){var r=visible0();if(S.sort==='name')r.sort(function(a,b){return a.name.localeCompare(b.name,'ar')});else if(S.sort==='cat')r.sort(function(a,b){return (a.cat||'').localeCompare(b.cat||'','ar')});return r}
+function visible0(){
+  var q=$("q").value.trim().toLowerCase();
+  return ch.map(function(c,i){return Object.assign({n:i+1},c)}).filter(function(c){
+    return (cat==="الكل"||c.cat===cat)&&(!onlyFav||fav.indexOf(c.id)>-1)&&(!q||c.name.toLowerCase().indexOf(q)>-1)});
+}
+function list(){
+  var v=visible();
+  $("list").innerHTML=v.length?v.map(function(c){
+    return '<div class="ch'+(cur&&cur.id===c.id?" on":"")+'" data-id="'+c.id+'"><span class="num">'+c.n+'</span><span class="ico">'+esc(c.ico||"📡")+'</span><div class="nm">'+esc(c.name)+'<div class="cat">'+esc(c.cat||"")+'</div></div><button class="star'+(fav.indexOf(c.id)>-1?" on":"")+'" data-f="'+c.id+'">★</button></div>'}).join(""):'<div class="empty">لا توجد قنوات مطابقة</div>';
+  cats();
+}
+
+/* ---------- noise ---------- */
+function noise(ms){if(!S.nz)return;hiss();
+  var cv=$("noise"),x=cv.getContext("2d");cv.width=160;cv.height=90;cv.style.display="block";
+  var end=performance.now()+ms;
+  (function f(){var d=x.createImageData(160,90);for(var i=0;i<d.data.length;i+=4){var g=Math.random()*255;d.data[i]=d.data[i+1]=d.data[i+2]=g;d.data[i+3]=255}
+   x.putImageData(d,0,0);if(performance.now()<end)requestAnimationFrame(f);else cv.style.display="none"})();
+}
+function osd(t){if(!S.osdOn)return;var o=$('osd');o.textContent=t;o.classList.add("on");clearTimeout(osd.t);osd.t=setTimeout(function(){o.classList.remove("on")},2500)}
+
+/* ---------- player ---------- */
+function clearPlayer(){
+  if(hls){hls.destroy();hls=null}
+  var s=$("screen");s.querySelectorAll("video,iframe").forEach(function(e){e.remove()});
+}
+function play(c){
+  cur=c;clearPlayer();noise(450);pushHist(c);
+  var idx=ch.findIndex(function(x){return x.id===c.id})+1;
+  osd(String(idx).padStart(2,"0"));
+  $("nName").textContent=c.name;$("nCat").textContent=c.cat||"";$("nEpg").textContent=epgNow(c);
+  var m=$("msg"),s=$("screen");
+  if(!c.url){m.style.display="flex";m.innerHTML='<div style="font-size:42px">🚧</div><div>لا يوجد رابط بث لهذه القناة بعد</div>';list();return}
+  m.style.display="none";
+  var t=c.type==="auto"||!c.type?(/\.m3u8/i.test(c.url)?"hls":/\.(mp4|webm|ogg)/i.test(c.url)?"video":"iframe"):c.type;
+  if(t==="iframe"){
+    var f=document.createElement("iframe");f.allow="autoplay; fullscreen";f.allowFullscreen=true;f.src=c.url;s.insertBefore(f,s.firstChild);
+  }else{
+    var v=document.createElement("video");v.controls=true;v.autoplay=!!S.ap;v.playsInline=true;v.volume=+$("vol").value;
+    s.insertBefore(v,s.firstChild);
+    var fail=function(){if(S.auto&&(window.__af=(window.__af||0)+1)<ch.length){toast('القناة لا تعمل — التالية');setTimeout(function(){step(1)},800);return}m.style.display='flex';m.innerHTML='<div style="font-size:42px">⚠️</div><div>تعذّر تشغيل هذه القناة</div><div class="hint">قد يكون الرابط معطلاً أو محجوباً</div>'};
+    v.addEventListener('error',fail);v.addEventListener('loadeddata',function(){window.__af=0});
+    if(t==="hls"&&window.Hls&&Hls.isSupported()){
+      hls=new Hls();hls.loadSource(c.url);hls.attachMedia(v);
+      hls.on(Hls.Events.ERROR,function(_,d){if(d.fatal)fail()});
+    }else v.src=c.url;
+    v.playbackRate=S.speed;if(S.ap){var p=v.play();if(p&&p.catch)p.catch(function(){})}
+  }
+  list();
+}
+function step(d){
+  var v=visible();if(!v.length)return;
+  var i=v.findIndex(function(x){return cur&&x.id===cur.id});
+  i=(i+d+v.length)%v.length;play(v[i]);
+}
+function vid(){return $("screen").querySelector("video")}
+
+/* ---------- admin ---------- */
+function admList(){
+  $("admList").innerHTML=ch.length?ch.map(function(c){
+    return '<div class="adm"><span>'+esc(c.ico||'📡')+' '+esc(c.name)+(c.st==='ok'?' ✅':c.st==='bad'?' ❌':'')+'</span><button class="btn" data-e="'+c.id+'">✎</button><button class="btn" data-u="'+c.id+'">↑</button><button class="btn dng" data-d="'+c.id+'">🗑</button></div>'}).join(""):'<div class="empty">لا توجد قنوات</div>';
+}
+function clearForm(){["fName","fIco","fUrl","fCat"].forEach(function(i){$(i).value=""});$("fType").value="auto";$("fEpg").value="";editId=null;$("fSave").textContent="＋ إضافة / حفظ"}
+function persist(){save(KEY,ch);cats();list();admList()}
+
+$("fSave").onclick=function(){
+  var n=$("fName").value.trim();if(!n){toast("أدخل اسم القناة");return}
+  var o={name:n,ico:$("fIco").value.trim()||"📡",url:$("fUrl").value.trim(),cat:$("fCat").value.trim()||"عام",type:$("fType").value,epg:$("fEpg").value};
+  if(editId){ch=ch.map(function(c){return c.id===editId?Object.assign({},c,o):c});toast("تم التعديل")}
+  else{o.id=Date.now();ch.push(o);toast("تمت الإضافة ✓")}
+  clearForm();persist();
+};
+$("fClear").onclick=clearForm;
+$("admList").onclick=function(e){
+  var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.d){if(confirm("حذف القناة؟")){ch=ch.filter(function(c){return c.id!=b.dataset.d});if(cur&&cur.id==b.dataset.d){cur=null;clearPlayer()}persist()}}
+  if(b.dataset.e){var c=ch.find(function(x){return x.id==b.dataset.e});editId=c.id;$("fName").value=c.name;$("fIco").value=c.ico||"";$("fUrl").value=c.url;$("fCat").value=c.cat||"";$("fType").value=c.type||"auto";$("fEpg").value=c.epg||"";$("fSave").textContent="💾 حفظ التعديل"}
+  if(b.dataset.u){var i=ch.findIndex(function(x){return x.id==b.dataset.u});if(i>0){var t=ch[i];ch[i]=ch[i-1];ch[i-1]=t;persist()}}
+};
+$("bExp").onclick=function(){var a=document.createElement("a");a.href="data:application/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(ch,null,2));a.download="channels.json";a.click()};
+$("bImp").onclick=function(){$("file").click()};
+$("file").onchange=function(e){
+  var f=e.target.files[0];if(!f)return;var r=new FileReader();
+  r.onload=function(){try{var a=JSON.parse(r.result);if(!Array.isArray(a))throw 0;ch=a.map(function(c,i){return{id:c.id||Date.now()+i,name:String(c.name||"قناة"),ico:c.ico||"📡",url:c.url||"",cat:c.cat||"عام",type:c.type||"auto"}});persist();toast("تم الاستيراد")}catch(x){toast("ملف غير صالح")}};
+  r.readAsText(f);
+};
+$("chgPw").onclick=async function(){var p=$("newPw").value;if(p.length<4){toast("4 أحرف على الأقل");return}save(PKEY,await sha(p));$("newPw").value="";toast("تم تغيير كلمة المرور")};
+$("reset").onclick=function(){if(confirm("استرجاع القنوات الافتراضية؟")){ch=DEFAULT.slice();persist()}};
+
+/* ---------- login ---------- */
+function modal(id,on){$(id).classList.toggle("on",on)}
+$("bAdmin").onclick=function(){if(admin){admList();modal("mAdmin",true)}else{$("pw").value="";modal("mLogin",true);setTimeout(function(){$("pw").focus()},50)}};
+async function login(){
+  var stored=load(PKEY,null);if(!stored){stored=await sha("admin123");save(PKEY,stored)}
+  if(await sha($("pw").value)===stored){admin=true;modal("mLogin",false);admList();modal("mAdmin",true)}else toast("كلمة المرور خاطئة ✗");
+}
+$("doLogin").onclick=login;$("pw").onkeydown=function(e){if(e.key==="Enter")login()};
+document.querySelectorAll("[data-close]").forEach(function(b){b.onclick=function(){modal("mLogin",false);modal("mAdmin",false)}});
+document.querySelectorAll(".modal").forEach(function(m){m.onclick=function(e){if(e.target===m)m.classList.remove("on")}});
+
+/* ---------- ui events ---------- */
+$("list").onclick=function(e){
+  var s=e.target.closest(".star");
+  if(s){var id=+s.dataset.f,i=fav.indexOf(id);i>-1?fav.splice(i,1):fav.push(id);save(FKEY,fav);list();return}
+  var r=e.target.closest(".ch");if(r){var c=ch.find(function(x){return x.id==r.dataset.id});if(c)play(c)}
+};
+$("cats").onclick=function(e){var c=e.target.closest(".chip");if(c){cat=c.dataset.c;list()}};
+$("q").oninput=list;
+$("bFav").onclick=function(){onlyFav=!onlyFav;this.classList.toggle("pri",onlyFav);list()};
+$("bPrev").onclick=function(){step(-1)};$("bNext").onclick=function(){step(1)};
+$("vol").oninput=function(){var v=vid();if(v)v.volume=+this.value};
+$("bMute").onclick=function(){var v=vid();if(v){v.muted=!v.muted;this.textContent=v.muted?"🔇":"🔊"}};
+function full(){var s=$("screen");document.fullscreenElement?document.exitFullscreen():(s.requestFullscreen&&s.requestFullscreen())}
+$("bFull").onclick=full;
+$("bTheme").onclick=function(){var r=document.documentElement,d=r.dataset.theme==="dark"||(!r.dataset.theme&&!matchMedia("(prefers-color-scheme: light)").matches);r.dataset.theme=d?"light":"dark";save(TKEY,r.dataset.theme)};
+document.addEventListener("keydown",function(e){
+  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.key==="ArrowUp"||e.key==="ArrowRight")step(-1);
+  else if(e.key==="ArrowDown"||e.key==="ArrowLeft")step(1);
+  else if(e.key==="m"||e.key==="M")$("bMute").click();
+  else if(e.key==="f"||e.key==="F")full();
+  else if(/^\d$/.test(e.key)){buf+=e.key;osd(buf);clearTimeout(bt);bt=setTimeout(function(){var c=ch[+buf-1];buf="";if(c)play(c)},1200)}
+});
+
+/* ---------- extras ---------- */
+var HKEY="darkTV.hist",hist=load(HKEY,[]),sleepT=null,sleepI=0;
+function pushHist(c){save('darkTV.last',c.id);hist=hist.filter(function(i){return i!==c.id});hist.unshift(c.id);hist=hist.slice(0,6);save(HKEY,hist);rHist()}
+function rHist(){var h=hist.map(function(i){return ch.find(function(c){return c.id===i})}).filter(Boolean);$("hist").innerHTML=h.length?"🕘 شاهدت مؤخراً:<br>"+h.map(function(c){return '<b data-h="'+c.id+'">'+esc(c.ico||"")+" "+esc(c.name)+'</b>'}).join(""):""}
+$("hist").onclick=function(e){var b=e.target.closest("b");if(b){var c=ch.find(function(x){return x.id==b.dataset.h});if(c)play(c)}};
+function tick(){var d=new Date();$("clock").textContent=d.toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}
+setInterval(tick,1000);tick();
+function updTk(){var n=ch.filter(function(c){return c.url}).length;$("cnt").textContent=ch.length+" قناة";$("tk").textContent="●  DARK TV — بث بلا حدود  ●  "+n+" قناة جاهزة للبث  ●  افتح لوحة المطور لإضافة قنواتك  ●  اضغط F لملء الشاشة  ●  اكتب رقم القناة للانتقال  ●  "+ch.slice(0,8).map(function(c){return c.name}).join("  ●  ")}
+setInterval(updTk,4000);
+$("bCin").onclick=function(){document.body.classList.toggle("cin")};
+document.addEventListener("keydown",function(e){if(e.key==="Escape")document.body.classList.remove("cin")});
+$("bRnd").onclick=function(){var v=visible();if(v.length)play(v[Math.floor(Math.random()*v.length)])};
+$("bPip").onclick=function(){var v=vid();if(v&&v.requestPictureInPicture)v.requestPictureInPicture().catch(function(){toast("غير مدعوم")});else toast("غير مدعوم لهذه القناة")};
+$("bri").oninput=function(){$("screen").style.filter="brightness("+this.value+")"};
+$("bSleep").onclick=function(){
+  var opts=[0,15,30,60];sleepI=(sleepI+1)%opts.length;clearTimeout(sleepT);var m=opts[sleepI];
+  if(!m){toast("أُلغي مؤقت النوم");return}
+  toast("سيتوقف البث بعد "+m+" دقيقة 😴");
+  sleepT=setTimeout(function(){cur=null;clearPlayer();noise(900);$("msg").style.display="flex";$("msg").innerHTML='<div style="font-size:42px">😴</div><div>انتهى مؤقت النوم</div>';list()},m*60000);
+};
+
+/* ---------- settings ---------- */
+var SKEY='darkTV.set';
+var S=Object.assign({accent:'#ff1e3c',crt:1,nz:1,ap:1,tkOn:1,osdOn:1,rem:1,auto:0,last:0,ratio:'16/9',font:100,speed:1,sort:'n',grid:0,vol:0.8,rain:1,snd:0},load(SKEY,{}));
+var TOG=[['crt','📺 خطوط الشاشة CRT'],['nz','📡 تشويش عند تبديل القناة'],['osdOn','🔢 إظهار رقم القناة'],['ap','▶ تشغيل تلقائي'],['auto','⏭ تخطي القنوات المعطلة تلقائياً'],['last','💾 تذكر آخر قناة'],['tkOn','📰 الشريط الإخباري'],['rem','🎮 الريموت'],['rain','🟩 خلفية المطر الرقمي'],['snd','🔊 صوت التشويش']];
+var COL=['#ff1e3c','#00f5d4','#a100ff','#ffb000','#2e9bff','#39ff14'];
+function sv(){save(SKEY,S)}
+function applyS(){
+ document.documentElement.style.setProperty('--a',S.accent);
+ var b=document.body;b.classList.toggle('nocrt',!S.crt);b.classList.toggle('notk',!S.tkOn);b.classList.toggle('norem',!S.rem);b.classList.toggle('norain',!S.rain);
+ $('screen').style.aspectRatio=S.ratio;document.querySelector('main').style.zoom=S.font/100;
+ $('list').classList.toggle('grid',!!S.grid);$('sortSel').value=S.sort;$('vol').value=S.vol;
+ var v=vid();if(v)v.playbackRate=S.speed;
+}
+function sel(k,arr,lab){return '<label class="opt"><span>'+lab+'</span><select class="in" style="width:auto" data-s="'+k+'">'+arr.map(function(r){return '<option value="'+r+'"'+(r==S[k]?' selected':'')+'>'+r+'</option>'}).join('')+'</select></label>'}
+function buildSet(){
+ $('setBox').innerHTML='<div>'+COL.map(function(c){return '<span class="sw'+(c===S.accent?' on':'')+'" data-c="'+c+'" style="background:'+c+';color:'+c+'"></span>'}).join('')+'</div>'
+ +TOG.map(function(t){return '<label class="opt"><span>'+t[1]+'</span><input type="checkbox" data-k="'+t[0]+'"'+(S[t[0]]?' checked':'')+'></label>'}).join('')
+ +sel('ratio',['16/9','4/3','21/9','1/1'],'🖥 نسبة الشاشة')+sel('font',[90,100,115,130],'🔠 حجم الواجهة %')+sel('speed',[0.75,1,1.25,1.5,2],'⏩ سرعة التشغيل');
+}
+$('setBox').onclick=function(e){var s=e.target.closest('.sw');if(s){S.accent=s.dataset.c;sv();applyS();buildSet()}};
+$('setBox').onchange=function(e){var t=e.target;if(t.dataset.k)S[t.dataset.k]=t.checked?1:0;if(t.dataset.s)S[t.dataset.s]=t.dataset.s==='ratio'?t.value:+t.value;sv();applyS()};
+$('bSet').onclick=function(){buildSet();modal('mSet',true)};
+$('bHelp').onclick=function(){modal('mSet',false);modal('mHelp',true)};
+$('setReset').onclick=function(){try{localStorage.removeItem(SKEY)}catch(e){}location.reload()};
+$('sortSel').onchange=function(){S.sort=this.value;sv();list()};
+$('bView').onclick=function(){S.grid=S.grid?0:1;sv();applyS()};
+var _vi=$('vol').oninput;$('vol').oninput=function(){_vi.call(this);S.vol=+this.value;sv()};
+$('screen').ondblclick=full;
+
+/* ---------- remote ---------- */
+function dial(d){buf+=d;osd(buf);clearTimeout(bt);bt=setTimeout(function(){var c=ch[+buf-1];buf='';if(c)play(c)},1200)}
+function recall(){var c=ch.find(function(x){return x.id===hist[1]});if(c)play(c);else toast('لا توجد قناة سابقة')}
+function vol(d){var e=$('vol');e.value=Math.min(1,Math.max(0,+e.value+d));e.oninput()}
+$('remote').innerHTML='<div class="rk">'+[1,2,3,4,5,6,7,8,9,'↩',0,'🎲'].map(function(k){return '<button class="btn" data-r="'+k+'">'+k+'</button>'}).join('')+'</div><div class="rs"><button class="btn" data-r="up">CH ＋</button><button class="btn" data-r="dn">CH －</button><button class="btn" data-r="vp">VOL ＋</button><button class="btn" data-r="vm">VOL －</button><button class="btn" data-r="mu">🔇</button></div>';
+$('remote').onclick=function(e){var b=e.target.closest('button');if(!b)return;var r=b.dataset.r;
+ if(/^\d$/.test(r))dial(r);else if(r==='↩')recall();else if(r==='🎲')$('bRnd').click();else if(r==='up')step(-1);else if(r==='dn')step(1);else if(r==='vp')vol(0.1);else if(r==='vm')vol(-0.1);else if(r==='mu')$('bMute').click()};
+document.addEventListener('keydown',function(e){if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;var k=e.key.toLowerCase();
+ if(k==='l')recall();else if(k==='g')$('bView').click();else if(k==='s')$('bSet').click();else if(k==='+'||k==='=')vol(0.1);else if(k==='-')vol(-0.1);else if(k==='?')modal('mHelp',true)});
+
+/* ---------- admin tools ---------- */
+$('bM3u').onclick=function(){
+ var n=0,cu=null;
+ $('m3u').value.split(/\r?\n/).forEach(function(l){l=l.trim();if(!l)return;
+  if(l.indexOf('#EXTINF')===0){var g=/group-title="([^"]*)"/.exec(l);cu={name:(l.split(',').pop()||'قناة').trim(),cat:g&&g[1]?g[1]:'M3U'}}
+  else if(l[0]!=='#'&&/^https?:/i.test(l)){var o=cu||{name:'قناة '+(ch.length+1),cat:'M3U'};ch.push({id:Date.now()+n,name:o.name,ico:'📡',cat:o.cat,type:'auto',url:l});cu=null;n++}});
+ if(n){persist();$('m3u').value=''}toast(n?'تم استيراد '+n+' قناة':'لم أجد قنوات في النص')};
+function testOne(c){return new Promise(function(res){
+ if(!c.url)return res('bad');
+ var t=c.type==='auto'||!c.type?(/\.m3u8/i.test(c.url)?'hls':/\.(mp4|webm|ogg)/i.test(c.url)?'video':'iframe'):c.type;
+ if(t==='iframe')return res('');
+ var v=document.createElement('video'),h=null,tm=0;
+ function d(r){clearTimeout(tm);if(h)h.destroy();v.removeAttribute('src');v.load();res(r)}
+ tm=setTimeout(function(){d('bad')},9000);v.muted=true;v.onloadedmetadata=function(){d('ok')};v.onerror=function(){d('bad')};
+ if(t==='hls'&&window.Hls&&Hls.isSupported()){h=new Hls();h.on(Hls.Events.ERROR,function(_,x){if(x.fatal)d('bad')});h.on(Hls.Events.MANIFEST_PARSED,function(){d('ok')});h.loadSource(c.url);h.attachMedia(v)}else v.src=c.url})}
+$('bTest').onclick=async function(){toast('جارٍ فحص الروابط…');await Promise.all(ch.map(async function(c){c.st=await testOne(c);admList()}));save(KEY,ch);toast('اكتمل الفحص ✓')};
+$('bDup').onclick=function(){var s={},b=ch.length;ch=ch.filter(function(c){if(!c.url)return true;if(s[c.url])return false;s[c.url]=1;return true});persist();toast('حُذف '+(b-ch.length)+' مكرر')};
+$('bCatDel').onclick=function(){var c=prompt('اسم التصنيف المراد حذفه:');if(c&&confirm('حذف كل قنوات «'+c+'»؟')){var b=ch.length;ch=ch.filter(function(x){return x.cat!==c});persist();toast('حُذفت '+(b-ch.length)+' قناة')}};
+function stats(){var m={};ch.forEach(function(c){var k=c.cat||'عام';m[k]=(m[k]||0)+1});$('stats').textContent='📊 '+ch.length+' قناة — '+Object.keys(m).map(function(k){return k+': '+m[k]}).join(' · ')}
+var _al=admList;admList=function(){_al();stats()};
+
+/* ---------- rain / sound ---------- */
+var rc=$('rain'),rx=rc.getContext('2d'),cols=[],fs=16,AC=null;
+function rsize(){rc.width=innerWidth;rc.height=innerHeight;cols=[];for(var i=0;i<Math.floor(rc.width/fs);i++)cols.push(Math.random()*rc.height/fs)}
+addEventListener('resize',rsize);rsize();
+setInterval(function(){if(!S.rain)return;rx.fillStyle='rgba(5,5,5,.12)';rx.fillRect(0,0,rc.width,rc.height);rx.fillStyle=S.accent;rx.font=fs+'px monospace';
+ cols.forEach(function(y,i){rx.fillText(String.fromCharCode(0x30A0+Math.random()*96),i*fs,y*fs);cols[i]=y*fs>rc.height&&Math.random()>0.975?0:y+1})},70);
+function hiss(){if(!S.snd)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var n=AC.sampleRate*0.4,b=AC.createBuffer(1,n,AC.sampleRate),d=b.getChannelData(0);for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*0.25;var s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start()}catch(e){}}
+
+/* ---------- EPG ---------- */
+function pad(t){return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
+function epgNow(c){
+ var L=(c.epg||'').split(/\r?\n/).map(function(l){var m=/^(\d{1,2}):(\d{2})\s+(.+)$/.exec(l.trim());return m?{t:+m[1]*60+ +m[2],n:m[3]}:null}).filter(Boolean).sort(function(a,b){return a.t-b.t});
+ if(!L.length)return '';
+ var d=new Date(),n=d.getHours()*60+d.getMinutes(),cu=L[L.length-1],nx=L[0],i;
+ for(i=0;i<L.length;i++){if(L[i].t<=n)cu=L[i]}
+ for(i=0;i<L.length;i++){if(L[i].t>n){nx=L[i];break}}
+ return '▶ '+cu.n+' · التالي '+pad(nx.t)+' '+nx.n;
+}
+setInterval(function(){if(cur)$('nEpg').textContent=epgNow(cur)},30000);
+
+/* ---------- stats / shot / backup ---------- */
+var W=load('darkTV.watch',{}),wt=0;
+function fmt(s){return s>=3600?Math.floor(s/3600)+' س '+Math.floor(s%3600/60)+' د':s>=60?Math.floor(s/60)+' د '+s%60+' ث':s+' ث'}
+setInterval(function(){if(!cur)return;var v=vid();if(v&&v.paused)return;W[cur.id]=(W[cur.id]||0)+1;if(++wt%10===0)save('darkTV.watch',W)},1000);
+$('bStat').onclick=function(){
+ var rows=ch.map(function(c){return{c:c,s:W[c.id]||0}}).sort(function(a,b){return b.s-a.s}),mx=(rows[0]&&rows[0].s)||1,tot=rows.reduce(function(a,r){return a+r.s},0);
+ $('statBox').innerHTML='<div class="hint">⏱ إجمالي المشاهدة: '+fmt(tot)+'</div>'+rows.slice(0,10).map(function(r){return '<div style="font-size:13px">'+esc(r.c.ico||'')+' '+esc(r.c.name)+' — '+fmt(r.s)+'<div class="bar" style="width:'+Math.max(2,r.s/mx*100)+'%"></div></div>'}).join('');
+ modal('mStat',true)};
+$('statClr').onclick=function(){W={};save('darkTV.watch',W);$('statBox').textContent='تم المسح'};
+$('bShot').onclick=function(){var v=vid();if(!v||!v.videoWidth){toast('لا يوجد فيديو للتصوير');return}
+ try{var c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);var a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='darktv-'+Date.now()+'.png';a.click();toast('📸 تم الحفظ')}catch(e){toast('المصدر يمنع التصوير')}};
+$('bBkp').onclick=function(){var a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify({ch:ch,fav:fav,S:S,W:W}));a.download='darktv-backup.json';a.click()};
+$('bRst').onclick=function(){$('bkFile').click()};
+$('bkFile').onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(o.ch)save(KEY,o.ch);if(o.fav)save(FKEY,o.fav);if(o.S)save(SKEY,o.S);if(o.W)save('darkTV.watch',o.W);location.reload()}catch(x){toast('ملف غير صالح')}};r.readAsText(f)};
+
+/* ---------- snake ---------- */
+var gT=null;
+function snake(){var c=$('snk'),x=c.getContext('2d'),N=16,P=c.width/N,s=[{x:8,y:8}],d={x:1,y:0},f={x:3,y:3},sc=0;clearInterval(gT);
+ window.sd=function(k){if(k==='l'&&d.x!==1)d={x:-1,y:0};if(k==='r'&&d.x!==-1)d={x:1,y:0};if(k==='u'&&d.y!==1)d={x:0,y:-1};if(k==='d'&&d.y!==-1)d={x:0,y:1}};
+ gT=setInterval(function(){var h={x:(s[0].x+d.x+N)%N,y:(s[0].y+d.y+N)%N};
+  if(s.some(function(p){return p.x===h.x&&p.y===h.y})){s=[{x:8,y:8}];sc=0}
+  s.unshift(h);if(h.x===f.x&&h.y===f.y){sc++;f={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}else s.pop();
+  x.fillStyle='#000';x.fillRect(0,0,c.width,c.height);x.fillStyle=S.accent;s.forEach(function(p){x.fillRect(p.x*P+1,p.y*P+1,P-2,P-2)});x.fillStyle='#ffb000';x.fillRect(f.x*P+2,f.y*P+2,P-4,P-4);$('sc').textContent='النقاط: '+sc},120)}
+$('bGame').onclick=function(){modal('mSet',false);modal('mGame',true);snake()};
+$('mGame').addEventListener('click',function(e){var b=e.target.closest('[data-g]');if(b&&window.sd)window.sd(b.dataset.g)});
+document.addEventListener('keydown',function(e){if(!$('mGame').classList.contains('on'))return;var m={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d'}[e.key];if(m){window.sd(m);e.stopImmediatePropagation();e.preventDefault()}},true);
+setInterval(function(){if(!$('mGame').classList.contains('on'))clearInterval(gT)},500);
+
+/* ---------- init ---------- */
+(function(){
+  var t=load(TKEY,"dark");document.documentElement.dataset.theme=t;
+  ch=load(KEY,null);if(!Array.isArray(ch)||!ch.length){ch=DEFAULT.slice();save(KEY,ch)}
+  fav=load(FKEY,[]);cats();list();updTk();rHist();applyS();var lc=load('darkTV.last',null);if(S.last&&lc){var c0=ch.find(function(x){return x.id===lc});if(c0)play(c0)}
+})();
+})();
+</script>
+</body>
+</html>
