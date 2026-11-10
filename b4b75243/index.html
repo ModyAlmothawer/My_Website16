@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شبكة تواصل بسيطة - Mini Social</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --like: #ef4444;
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 60px;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-switcher {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .user-switcher select {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+
+        main {
+            max-width: 680px;
+            margin: 24px auto;
+            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 18px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Create Post */
+        .post-creator textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            resize: none;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            height: 90px;
+        }
+
+        .post-creator textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .creator-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            gap: 10px;
+        }
+
+        .image-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Post Items */
+        .post-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: #e0e7ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            user-select: none;
+        }
+
+        .author-meta h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .author-meta span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .delete-btn:hover {
+            color: var(--like);
+        }
+
+        .post-content {
+            font-size: 0.98rem;
+            line-height: 1.6;
+            margin-bottom: 14px;
+            white-space: pre-line;
+        }
+
+        .post-image {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            max-height: 380px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 20px;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .action-btn.liked {
+            color: var(--like);
+            font-weight: 700;
+        }
+
+        .action-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Comments */
+        .comments-section {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .comment-item {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.88rem;
+        }
+
+        .comment-header {
+            font-weight: 700;
+            font-size: 0.82rem;
+            margin-bottom: 2px;
+            color: var(--text-main);
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .btn-comment {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .btn-comment:hover {
+            background: #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span>🌐</span>
+                <span>تواصل Mini</span>
+            </div>
+            <div class="user-switcher">
+                <label for="currentUserSelect">أنت تتصفح كـ:</label>
+                <select id="currentUserSelect" onchange="changeUser(this.value)">
+                    <option value="أحمد كريم">أحمد كريم</option>
+                    <option value="سارة محمد">سارة محمد</option>
+                    <option value="عمر الفاروق">عمر الفاروق</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- صندوق إنشاء المنشور -->
+        <section class="card post-creator">
+            <textarea id="postText" placeholder="ما الذي يخطر في بالك اليوم؟"></textarea>
+            <div class="creator-footer">
+                <input type="text" id="postImageUrl" class="image-input" placeholder="رابط صورة (اختياري)...">
+                <button class="btn-primary" onclick="createPost()">نشر</button>
+            </div>
+        </section>
+
+        <!-- قائمة المنشورات -->
+        <section id="postsFeed" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- يتم حقن المنشورات عبر JavaScript -->
+        </section>
+    </main>
+
+    <script>
+        // المستخدمون الافتراضيون
+        let currentUser = "أحمد كريم";
+
+        // بيانات تجريبية أولية تخزن في LocalStorage
+        const initialPosts = [
+            {
+                id: 1,
+                author: "عمر الفاروق",
+                avatar: "ع",
+                time: "منذ ساعة",
+                text: "أهلاً بالجميع في هذا النموذج التجريبي لموقع التواصل الاجتماعي! 🚀\nيمكنك إضافة منشورات جديدة، الإعجاب بها، والتعليق عليها.",
+                image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
+                likes: ["سارة محمد"],
+                comments: [
+                    { author: "سارة محمد", text: "تصميم رائع وبسيط جداً للتجربة!" }
+                ]
+            },
+            {
+                id: 2,
+                author: "سارة محمد",
+                avatar: "س",
+                time: "منذ ساعتين",
+                text: "تجربة كتابة منشور بدون صورة لاختبار سلاسة العرض والتعليقات.",
+                image: "",
+                likes: [],
+                comments: []
+            }
+        ];
+
+        // جلب البيانات من LocalStorage أو استخدام البيانات الافتراضية
+        function getPosts() {
+            const saved = localStorage.getItem('mini_social_posts');
+            if (!saved) {
+                localStorage.setItem('mini_social_posts', JSON.stringify(initialPosts));
+                return initialPosts;
+            }
+            return JSON.parse(saved);
+        }
+
+        function savePosts(posts) {
+            localStorage.setItem('mini_social_posts', JSON.stringify(posts));
+            renderFeed();
+        }
+
+        function changeUser(name) {
+            currentUser = name;
+            renderFeed();
+        }
+
+        // إنشاء منشور جديد
+        function createPost() {
+            const textEl = document.getElementById('postText');
+            const imgEl = document.getElementById('postImageUrl');
+            const text = textEl.value.trim();
+            const image = imgEl.value.trim();
+
+            if (!text && !image) {
+                alert("يرجى كتابة نص أو وضع رابط صورة للمنشور.");
+                return;
+            }
+
+            const posts = getPosts();
+            const newPost = {
+                id: Date.now(),
+                author: currentUser,
+                avatar: currentUser.charAt(0),
+                time: "الآن",
+                text: text,
+                image: image,
+                likes: [],
+                comments: []
+            };
+
+            posts.unshift(newPost);
+            savePosts(posts);
+
+            textEl.value = "";
+            imgEl.value = "";
+        }
+
+        // حذف منشور
+        function deletePost(id) {
+            if (confirm("هل أنت متأكد من رغبتك في حذف هذا المنشور؟")) {
+                let posts = getPosts();
+                posts = posts.filter(p => p.id !== id);
+                savePosts(posts);
+            }
+        }
+
+        // الإعجاب / إلغاء الإعجاب
+        function toggleLike(id) {
+            const posts = getPosts();
+            const post = posts.find(p => p.id === id);
+            if (!post) return;
+
+            const userIndex = post.likes.indexOf(currentUser);
+            if (userIndex > -1) {
+                post.likes.splice(userIndex, 1);
+            } else {
+                post.likes.push(currentUser);
+            }
+
+            savePosts(posts);
+        }
+
+        // إضافة تعليق
+        function addComment(e, id) {
+            e.preventDefault();
+            const input = document.getElementById(`comment-input-${id}`);
+            const commentText = input.value.trim();
+            if (!commentText) return;
+
+            const posts = getPosts();
+            const post = posts.find(p => p.id === id);
+            if (!post) return;
+
+            post.comments.push({
+                author: currentUser,
+                text: commentText
+            });
+
+            savePosts(posts);
+        }
+
+        // رسم المنشورات في الصفحة
+        function renderFeed() {
+            const feed = document.getElementById('postsFeed');
+            const posts = getPosts();
+
+            feed.innerHTML = posts.map(post => {
+                const isLiked = post.likes.includes(currentUser);
+                const hasComments = post.comments && post.comments.length > 0;
+
+                return `
+                    <article class="card">
+                        <div class="post-header">
+                            <div class="author-info">
+                                <div class="avatar">${post.avatar || post.author.charAt(0)}</div>
+                                <div class="author-meta">
+                                    <h4>${post.author}</h4>
+                                    <span>${post.time}</span>
+                                </div>
+                            </div>
+                            ${post.author === currentUser ? `
+                                <button class="delete-btn" title="حذف المنشور" onclick="deletePost(${post.id})">✕</button>
+                            ` : ''}
+                        </div>
+
+                        ${post.text ? `<div class="post-content">${post.text}</div>` : ''}
+                        ${post.image ? `<img src="${post.image}" alt="صورة المنشور" class="post-image" onerror="this.style.display='none'">` : ''}
+
+                        <div class="post-actions">
+                            <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                                <span>${isLiked ? '❤️' : '🤍'}</span>
+                                <span>${post.likes.length} إعجاب</span>
+                            </button>
+                            <span class="action-btn">
+                                <span>💬</span>
+                                <span>${post.comments.length} تعليق</span>
+                            </span>
+                        </div>
+
+                        <!-- قسم التعليقات -->
+                        <div class="comments-section">
+                            ${post.comments.map(c => `
+                                <div class="comment-item">
+                                    <div class="comment-header">${c.author}</div>
+                                    <div>${c.text}</div>
+                                </div>
+                            `).join('')}
+
+                            <form class="comment-form" onsubmit="addComment(event, ${post.id})">
+                                <input type="text" id="comment-input-${post.id}" class="comment-input" placeholder="اكتب تعليقاً باسم ${currentUser}...">
+                                <button type="submit" class="btn-comment">إرسال</button>
+                            </form>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        // تشغيل أولي
+        renderFeed();
+    </script>
+</body>
+</html>
